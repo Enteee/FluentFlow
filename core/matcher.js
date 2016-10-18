@@ -40,7 +40,8 @@
  *       states.push(new State {
  *         rule: state.rule.next,
  *         prev: [obj].concat(state.prev),
- *         context: state.context
+ *         prevContext: immutable(state.context),
+ *         context: {}
  *       })
  *     iff checkRunning == 0:
  *       For each state in states iff state.prev contains one of forgettables (parallel):
@@ -54,30 +55,93 @@
  */
 const async = require('async');
 const _ = require('lodash');
+const immutable = require('immutable');
 
 
-module.exports = (function () {
-  var log = function () {
-    // Comment/uncomment for debug output
-    // console.log.apply(this,arguments);
-  };
+/**     Rule : immutable({ check: f(context, prev, forget, match), next: Rule })
+ */
 
-  var error = function () {
-    // Comment/uncomment for error output
-    console.error.apply(this, arguments);
-  };
+module.exports = (function (log, error) {
+  if(!_.isFunction(log)) throw new Error('log must be function');
+  if(!_.isFunction(error)) throw new Error('error must be function');
 
-  var obj = function () {
-    this.rules = [];
+  const log = (log) ? log : () => {};
+  const error = (errro) ? error : console.error;
 
-    this.addRules = function (rules) {
-      rules.concat(rules);
+
+  return function () {
+    const chains = Array.prototype.slice.call(arguments);
+    const states = [];
+    if ( !(_.isArray(chains) && _.every(chains, (chain) => _.isArray(chain) && _.every(chain, _.isFunction))) ) throw new Error('chains must be array of array of functions'); };
+
+    function Rule (check, next) {
+      if ( !_.isFunction(check) ) throw new Error('check must be function');
+      if ( ! (next instanceof Rule) ) throw new Error('next must be Rule');
+
+      this.check = immutable.Map(check);
+      this.rule = immutable.Map(rule);
+
+    }
+
+    /**
+     *  State class 
+     * State: { immutable(rule: Rule), immutable(prev: []), immutable(prevContext: {}) context: {}}
+     */
+    function State (rule, prevState) {
+      prevState = prevState || {};
+
+      this.rule = rule;
+      this.prev = immutable.Map(prevState.prev || []);
+      this.prevContext = immutable.Map(prevState.context || {});
+      this.context = {};
+
     };
 
-    this.clearRules = function () {
-      this.rules = [];
-    };
-
+ * Constructor:
+ *   states = [new State { rule: firstRule, prev: [], context: {} }]
+ *
+ * matchNext(obj, [1]):
+ *   thorw error if isMatching
+ *   isMatching = true
+ *   checkRunning = 0
+ *   obj = immutable(obj)
+ *   forgettables = []
+ *
+ *   For each state in states (parallel):
+ *     checkRunning++
+ *     matchCalled = false
+ *     state.rule.check.apply({
+ *         obj: obj,
+ *         prev: state.prev,
+ *         context: state.context,
+ *       },
+ *       // arguments
+ *       forget,
+ *       function () {
+ *         throw error if matchCalled
+ *         matchCalled = true
+ *         match.apply(this, [obj, state].concat(arguments))
+ *       }
+ *     )
+ *
+ * Callbacks:
+ *   match(obj, state, match):
+ *     iff match:
+ *       states.push(new State {
+ *         rule: state.rule.next,
+ *         prev: [obj].concat(state.prev),
+ *         prevContext: immutable(state.context),
+ *         context: {}
+ *       })
+ *     iff checkRunning == 0:
+ *       For each state in states iff state.prev contains one of forgettables (parallel):
+ *         states.remove(state)
+ *       isMatching = false
+ *       call [1]
+ *
+ *   forget(objs):
+ *     forgettables = forgettables.concat(objs)
+ *
     var isMatching = false;
     this.matchNext = function (object, cb) {
       cb = cb || function () {};
@@ -234,143 +298,4 @@ module.exports = (function () {
     this.pushTo = []; // ruleid of rules to which params to push matches to. An entry "3" will push the all matches to the params of rule 3.
   };
 
-  obj.Set = function () {
-    this.data = [];
-    this.append = function () {
-      for (var i in arguments) {
-        var arg = arguments[i];
-        if (arg instanceof obj.Set) {
-          for (var k in arg.data) {
-            this.data.push(arg.data[k]);
-          }
-        } else if (arg instanceof obj.Rule) {
-          this.data.push(arg);
-        } else {
-          throw new Error('invalid argument type');
-        }
-      }
-    };
-    this.at = function (i) {
-      return this.data[i];
-    };
-    this.removeAt = function (i) {
-      return this.data.splice(i, 1);
-    };
-    this.size = function () {
-      return this.data.length;
-    };
-
-    this.pushTo = function (s) {
-      for (var k in this.data) {
-        var where = this.data[k];
-        for (var i in arguments) {
-          var what = arguments[i];
-          if (what instanceof obj.Set) {
-            what.receiveFrom(where);
-          } else if (what instanceof obj.Rule) {
-            what.conditional = true;
-            if (where.pushTo.indexOf(what) === -1) {
-              where.pushTo.push(what);
-            }
-          } else {
-            throw new Error('invalid argument type');
-          }
-        }
-      }
-      var n = new obj.Set();
-      n.append.apply(n, arguments);
-      return n;
-    };
-
-    this.receiveFrom = function () {
-      for (var k in this.data) {
-        var what = this.data[k];
-        what.conditional = true;
-        for (var i in arguments) {
-          var where = arguments[i];
-          if (where instanceof obj.Set) {
-            where.pushTo(what);
-          } else if (where instanceof obj.Rule) {
-            if (where.pushTo.indexOf(what) === -1) {
-              where.pushTo.push(what);
-            }
-          } else {
-            throw new Error('invalid argument type');
-          }
-        }
-      }
-      var n = new obj.Set();
-      n.append.apply(n, arguments);
-      return n;
-    };
-
-    this.addAction = function () {
-      for (var i in arguments) {
-        var f = arguments[i];
-        if (typeof (f) !== 'function') throw new Error('argument must be a function');
-        for (var k in this.data) {
-          var d = this.data[k];
-          d.actions.push(f);
-        }
-      }
-    };
-
-    this.append.apply(this, arguments);
-  };
-
-  obj.Builder = function () {
-    this.rules = [];
-    this.append = function () {
-      for (var i in arguments) {
-        var arg = arguments[i];
-        if (arg instanceof obj.Set) {
-          for (var k in arg.data) {
-            this.assign(arg.data[k]);
-          }
-        } else if (arg instanceof obj.Rule) {
-          this.assign(arg);
-        } else {
-          throw new Error('invalid argument type');
-        }
-      }
-    };
-    this.assign = function (rule) {
-      if (rule.id != null) return rule.id;
-      rule.id = this.rules.length;
-      this.rules.push(rule);
-      for (var i = 0; i < rule.pushTo.length; i++) {
-        var pushToRule = rule.pushTo[i];
-        if (pushToRule instanceof obj.Rule) {
-          rule.pushTo[i] = this.assign(pushToRule); // replace rule with integer
-        } else if (typeof (pushToRule) !== 'number') {
-          throw new Error('invalid type in rule.pushto');
-        }
-      }
-      return rule.id;
-    };
-
-    this.printRules = function () {
-      log('Rules (' + this.rules.length + ')');
-      for (var i = 0; i < this.rules.length; i++) {
-        var rule = this.rules[i];
-        var str = '';
-        if (rule.conditional) {
-          str += 'conditional ';
-        }
-        if (rule.pushTo.length) {
-          str += 'pushesTo: ' + rule.pushTo.toString() + ' ';
-        }
-        log('Rule ' + i + ': ' + str + ' Checkers (' + rule.checkers.length + '):');
-        str = '';
-        for (var j in rule.checkers) {
-          str += 'Checker ' + j + ': ' + rule.checkers[j].toString();
-        }
-        log(str);
-      }
-    };
-
-    this.append.apply(this, arguments);
-  };
-
-  return obj;
 }());
