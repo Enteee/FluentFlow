@@ -10,10 +10,12 @@
   },
   "dependencies": {
     "JSONStream": "^1.1.1",
+    "async": "^2.1.1",
     "deasync": "^0.1.4",
     "event-stream": "^3.3.2",
     "eventemitter2": "^2.1.3",
     "harmony-reflect": "^1.4.2",
+    "lodash": "^4.16.4",
     "mini-complete-assign": "0.0.1",
     "minimist": "^1.2.0",
     "uglify-js": "^2.6.2",

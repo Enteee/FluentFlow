@@ -1,8 +1,60 @@
 /**
- * Created by Timo on 26.02.2016.
+ * FluentFlow matching core
+ * @author Timo
+ * @author Enteee  <ducksource@duckpond.ch>
+ * 
+ * Classes:
+ *   Rule : immutable({ check: f(context, prev, forget, match), next: Rule })
+ *   State: { immutable(rule: Rule), immutable(prev: []), context: {}}
+ *
+ * Constructor:
+ *   states = [new State { rule: firstRule, prev: [], context: {} }]
+ *
+ * matchNext(obj, [1]):
+ *   thorw error if isMatching
+ *   isMatching = true
+ *   checkRunning = 0
+ *   obj = immutable(obj)
+ *   forgettables = []
+ *
+ *   For each state in states (parallel):
+ *     checkRunning++
+ *     matchCalled = false
+ *     state.rule.check.apply({
+ *         obj: obj,
+ *         prev: state.prev,
+ *         context: state.context,
+ *       },
+ *       // arguments
+ *       forget,
+ *       function () {
+ *         throw error if matchCalled
+ *         matchCalled = true
+ *         match.apply(this, [obj, state].concat(arguments))
+ *       }
+ *     )
+ *
+ * Callbacks:
+ *   match(obj, state, match):
+ *     iff match:
+ *       states.push(new State {
+ *         rule: state.rule.next,
+ *         prev: [obj].concat(state.prev),
+ *         context: state.context
+ *       })
+ *     iff checkRunning == 0:
+ *       For each state in states iff state.prev contains one of forgettables (parallel):
+ *         states.remove(state)
+ *       isMatching = false
+ *       call [1]
+ *
+ *   forget(objs):
+ *     forgettables = forgettables.concat(objs)
+ *
  */
+const async = require('async');
+const _ = require('lodash');
 
-var deasync = require('deasync');
 
 module.exports = (function () {
   var log = function () {
@@ -16,14 +68,10 @@ module.exports = (function () {
   };
 
   var obj = function () {
+    this.rules = [];
+
     this.addRules = function (rules) {
-      if (!(this.rules)) {
-        this.rules = {};
-      }
-      Object.assign(this.rules, rules);
-      for (var i in this.rules) {
-        this.rules[i].id = i;
-      }
+      rules.concat(rules);
     };
 
     this.clearRules = function () {
@@ -32,112 +80,55 @@ module.exports = (function () {
 
     var isMatching = false;
     this.matchNext = function (object, cb) {
-      const isAsync = !!cb;
       cb = cb || function () {};
+      if (typeof (cb) !== 'function') throw new Error('Callback must be a function');
+      if (isMatching) throw new Error('Call to matchNext while the previous call has not returned');
 
-      if (isMatching) {
-        throw new Error('You cannot call matchNext while the previous call has not returned');
-      }
       isMatching = true;
-
-      if (typeof (cb) !== 'function') {
-        throw new Error('Second argument must be a function (optional)');
-      }
-
-      var runtimeExceptions = [];
-      function addRuntimeException (e) {
-        error(e.toString());
-        runtimeExceptions.push(e);
-        if (!isAsync) throw e;
-      }
-
-      log('new object', object);
-
-      var pushTo = { };
-      var pushObjectTo = function (from, to, params) {
-        log('request push from ' + from + ' to ' + to + ' params ', params);
-        if (pushTo[to]) {
-          if (pushTo[to][from]) {
-            pushTo[to][from].push(params);
-          } else {
-            pushTo[to][from] = [params];
-          }
-        } else {
-          pushTo[to] = {};
-          pushTo[to][from] = [params];
-        }
+      var cbOriginal = cb;
+      cb = function(){
+        isMatching = false;
+        cbOriginal();
       };
 
-      var asyncTasksStarted = 0;
-      var asyncTasksRunning = 0;
-      var self = this;
-      var asyncDone = function () {
-        if (asyncTasksStarted > 0) {
-          if (asyncTasksRunning === 0) {
-            throw new Error('AsyncDone called too many times');
-          }
-          asyncTasksRunning--;
+      /**
+       * recursive rule checking function
+       * @param rule rule to check
+       * @param state checking state
+       * @cb function(err)
+       */
+      function checkRule (rule, obj, cb) {
+
+        state = state || {
+          current: null,
+
+          param: null,
+          cleanCurrent: null,
         }
 
-        if (asyncTasksRunning === 0) {
-          for (var toWhere in pushTo) {
-            var pushFrom = pushTo[toWhere];
-            for (var fromWhere in pushFrom) {
-              var params = pushFrom[fromWhere];
-              log('before pushing from ' + fromWhere + ' to ' + toWhere, params);
-              for (var ind in params) {
-                self.rules[toWhere].params.push(params[ind]);
-              }
-              log('after pushing from ' + fromWhere + ' to ' + toWhere, params);
-            }
-          }
-          isMatching = false;
-          if (runtimeExceptions.length > 0) return cb(runtimeExceptions.join());
-          cb();
-        }
-      };
-
-      // Function that checks the current object against the passed rule
-      // Function will first be called with only one argument: the rule to check
-      // If one of the checker functions takes multiple parameters, and multiple ruleDef.params are available, the function will then be called for every ruleDef.param.
-      var checkRule = function (ruleDef, param, ind, param2remove, cleanCurrent) {
-        var ruleId = ruleDef.id;
-        var checkerInd = ind || 0; // index of the next checker function to execute
-        var hasParam = (param !== undefined);
-        var asyncMode = false; // will be set to true as soon as one checker function returns undefined and starts using the async "next()" callback.
-
-        var context = { // context that will be used as "this" object for the checker functions
-          'queue': ruleDef.params, // All currently queued params. Can be modified by checkers and actions.
-          'current': param2remove || null, // The object in queue which is related to the current check action.
-          'cleanCurrent': cleanCurrent || ruleDef.autoCleanQueue // Whether or not "current" will be removed from "queue" after the rule matched and all actions have been executed
+        // 'this' object inside rule
+        var context = {
         };
 
         // Function that calls all callbacks of a ruleDef and pushes objects into following queues
-        var afterMatch = function (params) {
-          var copy = params.slice(); // make one copy for all action handlers
-          var blockers = [];
-          for (var i in ruleDef.actions) { // foreach action handler
-            var blocker = [].concat(
-              ruleDef.actions[i].apply(context, copy) || function () { return false; }
-            );
-            if (blocker.some(function (b) { return typeof b !== 'function'; })) throw new Error('Blocker must be a function or array of functions');
-            blockers = blockers.concat(blocker);
-          }
-          for (i in blockers) { // foreach blocker
-            deasync.loopWhile(blockers[i]);
-          }
-          if (ruleDef.pushTo.length > 0) {
-            for (var k in ruleDef.pushTo) {
-              var toWhere = ruleDef.pushTo[k];
-              pushObjectTo(ruleId, toWhere, params.slice()); // make one copy per ruleDef
+        function afterMatch (params) {
+          var copy = state.params.slice(); // make one copy for all action handlers
+          async.each(ruleDef.actions, function (action, cb) {
+            action.apply(context, copy.concat(cb));
+          }, function (err) {
+            if (err) return cb(err);
+            if (ruleDef.pushTo.length > 0) {
+              ruleDef.pushTo.forEach(function (toWhere) {
+                pushObjectTo(ruleId, toWhere, params.slice()); // make one copy per ruleDef
+              }
             }
-          }
+          });
         };
 
         // Function that will be called when all checker function's returned true
         // Calls the callbacks and marks the async task's as finished
-        var endCheck = function () {
-          if (hasParam) {
+        function endCheck () {
+          if (!!state.param) {
             log('match on rule ' + ruleId + ' with param', param);
             afterMatch(param); // Call action, apply pushTo and unpushTo
             if (context.cleanCurrent) { // param must be removed
@@ -175,52 +166,31 @@ module.exports = (function () {
         };
 
         // Function that calls the next checker function and validates it's return value
-        var checkNext = function (checker, args) {
-          var funcReturned = false; // var that says whether or not the checker function has yet returned (sync OR async !!)
-          context.next = function (matched) {
-            if (funcReturned) {
+        function checkNext (checker, args) {
+          var cbCalled = false; // var that says whether or not the checker function has yet returned (sync OR async !!)
+          // push callback
+          args.push(function (matched) {
+            matched = (typeof matched !== 'undefined') ? matched : true;
+
+            if (cbCalled) {
               throw new Error('You can not call next() multiple times, or after you function returned a boolean');
             }
-            funcReturned = true;
-            if (matched === true) {
-              continueCheck();
-            } else if (matched === false) {
-              if (asyncMode) {
-                asyncDone(); // mark rule check task as finished
-              }
-            } else {
-              log(ruleDef.checkers[checkerInd - 1].toString());
-              throw new Error('Invalid argument to next() function. must be boolean');
-            }
+            cbCalled = true;
+            if (matched) continueCheck();
           };
 
           try {
-            var retVal = checker.apply(context, args);
-            if (typeof (retVal) === 'boolean') {
-              if (funcReturned) {
-                throw new Error('You cannot return a boolean, after you called next()');
-              }
-              context.next(retVal); // will decide what to do next and set funcReturned=true
-            } else if (typeof (retVal) === 'undefined') {
-              if (!funcReturned && !asyncMode) {
-                asyncMode = true;
-                asyncTasksStarted++;
-                asyncTasksRunning++;
-              }
-            } else {
-              throw new Error('Invalid return value of matcher function. must be boolean or undefined (async)');
-            }
+            checker.apply(context, args);
           } catch (e) {
             return addRuntimeException(e);
           }
         };
 
         // Function that executes the next step of checking of this rule or ends the checking with endCheck()
-        var continueCheck = function () {
-          if (checkerInd === ruleDef.checkers.length) { // was last checker
-            endCheck();
-            return;
-          }
+        function continueCheck () {
+          // was last checker ?
+          if (checkerInd === ruleDef.checkers.length) return endCheck();
+
           var checker = ruleDef.checkers[checkerInd++]; // get current checker and increment for next round
           hasParam = hasParam || (checker.length > 1 && ruleDef.params.length > 0); // if the checker takes more than one argument, and we have more than one object to pass
           if (!hasParam) {
@@ -241,28 +211,24 @@ module.exports = (function () {
         continueCheck(); // Start checking with the first checker
       };
 
-      for (var ruleId in this.rules) { // foreach rule
-        var ruleDef = this.rules[ruleId];
-        if (!ruleDef.conditional || ruleDef.params.length > 0) { // Rule must be processed
-          checkRule(ruleDef); // check one rule (async)
-        }
-      }
-
-      if (asyncTasksStarted === 0) { // No Async tasks ever started
-        asyncDone();
-      } else if (isMatching && !isAsync) { // Async tasks running and no callback specified
-        deasync.loopWhile(function () {
-          return isMatching; // continue deasync's loopWhile as long as async tasks are runnning
-        });
-      }
+      // check all rules
+      async.each(this.rules, function(rule, cb){
+        if (rule.conditional && rule.params.length <= 0) return cb(); // Rule must not be processed
+        checkRule(rule, null, cb); // check one rule (async)
+      }, cb);
     };
   };
 
-  obj.Rule = function (rule, action) {
-    this.id = null; // The id of the rule (will be autofilled after calling addRules())
-    this.conditional = false; // if set to true the rule will only be executed if there are params available
-    this.autoCleanQueue = true; // if set to true the queue will be cleared of all elements that matched the rule.
-    this.params = []; // params objects (one entry = array of matches along the chain), those params shall be passed down the chain and to the action handlers
+  obj.Rule = function (rules, actions) {
+    rules = [].concat(rule || function (cb) { cb(); });
+    actions = [].concat(action || function (cb) { cb(); });
+    if(_.some(rules, _.negate(_.isFunction))) throw new Error('Rules must be function(s)');
+    if(_.some(actions, _.negate(_.isFunction))) throw new Error('Actions must be function(s)');
+   
+
+    this.queu = []; // params objects (one entry = array of matches along the chain), those params shall be passed down the chain and to the action handlers
+    this.queuSize = 
+    
     this.checkers = rule ? [rule] : []; // rule check functions. First parameter: Current Object, Second Parameter: array of the previous objects down the chain
     this.actions = action ? [action] : []; // action handler functions which will be called on match. First parameter: Current Object, Second Parameter: array of the previous objects down the chain
     this.pushTo = []; // ruleid of rules to which params to push matches to. An entry "3" will push the all matches to the params of rule 3.
@@ -405,5 +371,6 @@ module.exports = (function () {
 
     this.append.apply(this, arguments);
   };
+
   return obj;
 }());
