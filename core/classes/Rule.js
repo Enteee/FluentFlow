@@ -15,7 +15,7 @@ module.exports = class Rule {
 
     this.check = check;
     this.next = next;
-    this.then = function (cb) { cb(); };
+    this.then = function (objs, cb) { cb(); };
   }
 
   setThen (then) {

@@ -40,8 +40,8 @@
  */
 const _ = require('lodash');
 const async = require('async');
-const immutable = require('immutable');
 const path = require('path');
+const make = require(path.join(__dirname, 'utils', 'immutable'));
 
 const CLASS_DIR = 'classes';
 const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
@@ -64,48 +64,41 @@ module.exports = function () {
 
     var isMatching = false;
     return function (obj, cb) {
+      obj = make.immutable(obj || {});
       cb = cb || function () {};
-      if (!_.isObject(obj)) throw new Error('obj must be Object');
       if (!_.isFunction(cb)) throw new Error('cb must be Function');
       if (isMatching) throw new Error('matching is still in progress');
 
       isMatching = true;
-      obj = immutable.Map(obj);
 
       async.each(states, function (state, cb) {
-        (function () {
-          var matchCalled = false;
-
-          state.rule.check.call(
-            this,
-            // match callback
-            function (matched) {
-              if (matchCalled) cb('match callback already called');
-              matchCalled = true;
-              if (!matched) return cb();
+        var matchCalled = false;
+        state.rule.check(make.mutable(obj), state.prev, state.context,
+          // match callback
+          function (matched) {
+            if (matchCalled) cb('match callback already called');
+            matchCalled = true;
+            if (!matched) return cb();
+            if (state.rule.next) {
+              // push to next rule
               states.push(new State(
                 state.rule.next,
+                obj,
                 state
               ));
-              state.rule.then.apply(
-                immutable.Map(this),
-                cb
-              );
-            },
-            // forget callback
-            function (forgettables) {
-              forgettables = [].concat(forgettables);
-              if (!(_(forgettables).each(_.isObject))) cb('forgettables must be objects');
-              _(state).remove(o => _(forgettables).some(f => _(f).isEqual(o)));
             }
-          );
-        }).apply({
-          // this
-          obj: obj,
-          objs: [obj].concat(state.prev),
-          prev: state.prev,
-          context: state.context
-        });
+            state.rule.then(
+              make.immutable([obj].concat(state.prev)),
+              cb
+            );
+          },
+          // forget callback
+          function (forgettables) {
+            forgettables = [].concat(forgettables);
+            if (!(_(forgettables).each(_.isObject))) cb('forgettables must be [Objects]');
+            _(state).remove(o => _(forgettables).some(f => _(f).isEqual(o)));
+          }
+        );
       }, (err) => {
         if (err) return cb(err);
         isMatching = false;
