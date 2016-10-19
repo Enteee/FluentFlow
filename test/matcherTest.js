@@ -7,7 +7,7 @@ exports.testSimpleMatch = function (test) {
   var thenCalls = 0;
   const ffm = ff.Matcher(
     ff.Builder(
-      (cb) => cb(console.log(this))
+      (cb) => cb(this.n === 3)
     ).then(
       (cb) => cb(thenCalls++)
     )
