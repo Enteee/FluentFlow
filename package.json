@@ -1,6 +1,6 @@
 {
   "name": "fluentflow",
-  "main": "modules.js",
+  "main": "index.js",
   "version": "0.3.0",
   "scripts": {
     "test": "node node_modules/nodeunit/bin/nodeunit && node node_modules/semistandard/bin/cmd.js --verbose ",
@@ -11,13 +11,11 @@
   "dependencies": {
     "JSONStream": "^1.1.1",
     "async": "^2.1.1",
-    "deasync": "^0.1.4",
     "event-stream": "^3.3.2",
     "eventemitter2": "^2.1.3",
     "harmony-reflect": "^1.4.2",
     "immutable": "^3.8.1",
     "lodash": "^4.16.4",
-    "mini-complete-assign": "0.0.1",
     "minimist": "^1.2.0",
     "uglify-js": "^2.6.2",
     "vm2": "^3.1.0"

@@ -41,34 +41,35 @@
 const _ = require('lodash');
 const async = require('async');
 const immutable = require('immutable');
+const path = require('path');
 
-const Rule = require('classes/Rule')
-const State = rquire
+const CLASS_DIR = 'classes';
+const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
+const State = require(path.join(__dirname, CLASS_DIR, 'State'));
 
-module.exports = ( () => {
-  return () => {
+module.exports = function () {
+  return function () {
     const chains = Array.prototype.slice.call(arguments);
     const states = [];
 
     if (!(
         _.isArray(chains)
         && _.every(chains, (chain) => 
-          _.isArray(chain)
-          && chain.length > 0
-          && _.every(chain, _.isFunction)
+          (chain instanceof Rule)
         )
-    )) throw new Error('chains must be array of array of functions');
+    )) throw new Error('chains must be array of Rules');
 
-    chains.forEach((chain) => states.push(new State(chain[0])));
+    // add a state per chain
+    chains.forEach((chain) => states.push(new State(chain)));
 
     var isMatching = false;
-    this.matchNext = (obj, cb) => {
+    return function (obj, cb) {
       if (!_.isObject(obj)) throw new Error('obj must be Object');
-      if (isMatching) throw new Error('called matchNext while matching is still in progress');
+      if (isMatching) throw new Error('matching is still in progress');
 
       isMatching = true;
       var stateRunning = 0;
-      obj = immutable(obj)
+      obj = immutable.Map(obj)
       var forgettables = [];
       
       async.each(states, (state, cb) => {
@@ -105,4 +106,4 @@ module.exports = ( () => {
       });
     }
   }
-};
+}
