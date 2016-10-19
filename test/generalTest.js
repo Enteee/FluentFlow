@@ -1,7 +1,4 @@
-const path = require('path');
-
-// check if module inclusion works
-exports.testMatchbox = function (test) {
-  require(path.join(__dirname, '..', 'modules.js'));
+exports.testRequire = function (test) {
+  require('..');
   test.done();
 };

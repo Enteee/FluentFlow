@@ -24,5 +24,5 @@ module.exports = class State {
     this.prevContext = immutable.Map(prevState.context || {});
     this.context = {};
   }
-}
+};
 

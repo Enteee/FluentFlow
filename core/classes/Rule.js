@@ -15,5 +15,11 @@ module.exports = class Rule {
 
     this.check = check;
     this.next = next;
+    this.then = function (cb) { cb(); };
   }
-}
+
+  setThen (then) {
+    if (!_.isFunction(then)) throw new Error('then must be Function');
+    this.then = then;
+  }
+};
