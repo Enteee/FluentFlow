@@ -26,7 +26,7 @@ exports.testSimpleMatch = function (test) {
 exports.testSimpleNoMatch = function (test) {
   const ffm = ff.Matcher(
     ff.Builder(
-      (o, p, c, pc, cb) => cb(false)
+      (o, p, c, pc, cb) => cb()
     ).then(
       (objs, cb) => cb(test.ok(false))
     )
@@ -74,7 +74,7 @@ exports.testSimplAsyncNoMatch = function (test) {
   const ffm = ff.Matcher(
     ff.Builder(
       (o, p, c, pc, cb) => setTimeout(
-        () => cb(false),
+        () => cb(),
         1
       )
     ).then(
@@ -112,7 +112,7 @@ exports.testFollowedBy = function (test) {
         test.equals(p.size, 1);
         test.equals(p.get(0), 42);
         test.ok(o > p.get(0));
-        cb(false);
+        cb();
       }
     ).then(
       (objs, cb) => cb(thenCalls++)
@@ -139,7 +139,7 @@ exports.testContext = function (test) {
       (o, p, c, pc, cb) => {
         test.equal(pc.get('n').size, 43);
         pc.get('n').forEach((pc, i) => test.equal(pc, i));
-        cb();
+        cb(true);
       }
     ).then()
   );
@@ -151,15 +151,43 @@ exports.testContext = function (test) {
 exports.testForget = function (test) {
   const ffm = ff.Matcher(
     ff.Builder(
-      (o, p, c, pc, cb) => { cb(o === 42); }
+      (o, p, c, pc, cb) => cb(o === 42)
     ).followedBy(
       (o, p, c, pc, cb, forget) => {
         forget(p.get(0));
-        cb();
+        cb(true);
       }
     ).then(
-      (o, cb) => {
-        test.equals(o, 43);
+      (objs, cb) => {
+console.log(objs);
+//        test.equals(objs.get(0), 43);
+        cb();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm(obj));
+  test.done();
+};
+
+exports.testMultiChain = function (test) {
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => cb(o === 42)
+    ).followedBy(
+      (o, p, c, pc, cb) => cb(true)
+    ).then(
+      (objs, cb) => {
+        //test.equals(o.get(0), 43);
+        cb();
+      }
+    ),
+    // forget after 43
+    ff.Builder(
+      (o, p, c, pc, cb) => cb(o === 43)
+    ).then(
+      (objs, cb, forget) => {
+        forget(42);
         cb();
       }
     )

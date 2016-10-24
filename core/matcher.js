@@ -73,6 +73,14 @@ module.exports = function () {
 
       async.each(states, function (state, cb) {
         var matchCalled = false;
+
+        // forget callback
+        function forget () {
+          const forgettables = Array.prototype.slice.call(arguments);
+console.log('forgetting: ', forgettables);
+          _(state).remove(o => _(forgettables).some(f => _(f).isEqual(o)));
+        }
+
         state.rule.check(make.mutable(obj),
           state.prev,
           state.context,
@@ -82,25 +90,16 @@ module.exports = function () {
             if (matchCalled) cb('match callback already called');
             matchCalled = true;
             if (!matched) return cb();
-            if (state.rule.next) {
-              // push to next rule
-              states.push(new State(
-                state.rule.next,
-                obj,
-                state
-              ));
-            }
+            const newState = new State(
+                state.rule.next, obj, state
+            );
+            // push to next rule
+            if (state.rule.next) states.push(newState);
             state.rule.then(
-              make.immutable([obj].concat(state.prev)),
-              cb
+              newState.prev, cb, forget
             );
           },
-          // forget callback
-          function (forgettables) {
-            forgettables = [].concat(forgettables);
-            if (!(_(forgettables).each(_.isObject))) cb('forgettables must be [Objects]');
-            _(state).remove(o => _(forgettables).some(f => _(f).isEqual(o)));
-          }
+          forget
         );
       }, (err) => {
         if (err) return cb(err);
