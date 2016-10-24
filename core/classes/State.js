@@ -14,13 +14,23 @@ module.exports = class State {
    *  @param {State} prevState - State this state originates from.
    */
   constructor (rule, obj, prevState) {
-    prevState = prevState || {};
     if (!(rule instanceof Rule)) throw new Error('rule must be Rule');
-    if (!(_.isEmpty(prevState) || prevState instanceof State)) throw new Error('prevState must be State');
+    if (!(_.isUndefined(prevState) || prevState instanceof State)) throw new Error('prevState must be State');
 
     this.rule = rule;
-    this.prev = make.immutable((obj) ? [obj].concat(prevState.prev) : (prevState.prev || []));
-    this.prevContext = make.immutable(prevState.context || {});
+
+    if (!_.isUndefined(obj)) {
+      if (!_.isUndefined(prevState) && !_.isUndefined(prevState.prev)) {
+        this.prev = make.immutable([obj].concat(prevState.prev));
+      } else {
+        this.prev = make.immutable([obj]);
+      }
+    } else {
+      if (!_.isUndefined(prevState) && !_.isUndefined(prevState.prev)) {
+        this.prev = prevState.prev;
+      }
+    }
+    if (!_.isUndefined(prevState) && !_.isUndefined(prevState.context)) this.prevContext = make.immutable(prevState.context);
     this.context = {};
   }
 };

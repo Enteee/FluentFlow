@@ -11,7 +11,7 @@ exports.testSimpleMatch = function (test) {
 
   const ffm = ff.Matcher(
     ff.Builder(
-      (o, p, c, cb) => cb(o === 42)
+      (o, p, c, pc, cb) => cb(o === 42)
     ).then(
       (objs, cb) => cb(thenCalls++)
     )
@@ -26,7 +26,7 @@ exports.testSimpleMatch = function (test) {
 exports.testSimpleNoMatch = function (test) {
   const ffm = ff.Matcher(
     ff.Builder(
-      (o, p, c, cb) => cb(false)
+      (o, p, c, pc, cb) => cb(false)
     ).then(
       (objs, cb) => cb(test.ok(false))
     )
@@ -42,7 +42,7 @@ exports.testSimplAsyncMatch = function (test) {
 
   const ffm = ff.Matcher(
     ff.Builder(
-      (o, p, c, cb) => setTimeout(
+      (o, p, c, pc, cb) => setTimeout(
         () => cb(o === 42),
         1
       )
@@ -73,7 +73,7 @@ exports.testSimplAsyncNoMatch = function (test) {
 
   const ffm = ff.Matcher(
     ff.Builder(
-      (o, p, c, cb) => setTimeout(
+      (o, p, c, pc, cb) => setTimeout(
         () => cb(false),
         1
       )
@@ -105,11 +105,14 @@ exports.testFollowedBy = function (test) {
 
   const ffm = ff.Matcher(
     ff.Builder(
-      (o, p, c, cb) => cb(o === 42)
+      (o, p, c, pc, cb) => cb(o === 42)
     ).followedBy(
-      (o, p, c, cb) => {
+      (o, p, c, pc, cb) => {
         followedByCalls++;
-        cb(o.n <= p.get(0));
+        test.equals(p.size, 1);
+        test.equals(p.get(0), 42);
+        test.ok(o > p.get(0));
+        cb(false);
       }
     ).then(
       (objs, cb) => cb(thenCalls++)
@@ -124,3 +127,44 @@ exports.testFollowedBy = function (test) {
   test.done();
 };
 
+exports.testContext = function (test) {
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => {
+        if (!c.n) c.n = [];
+        c.n = c.n.concat(o);
+        cb(o === 42);
+      }
+    ).followedBy(
+      (o, p, c, pc, cb) => {
+        test.equal(pc.get('n').size, 43);
+        pc.get('n').forEach((pc, i) => test.equal(pc, i));
+        cb();
+      }
+    ).then()
+  );
+
+  N.forEach((obj) => ffm(obj));
+  test.done();
+};
+
+exports.testForget = function (test) {
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => { cb(o === 42); }
+    ).followedBy(
+      (o, p, c, pc, cb, forget) => {
+        forget(p.get(0));
+        cb();
+      }
+    ).then(
+      (o, cb) => {
+        test.equals(o, 43);
+        cb();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm(obj));
+  test.done();
+};

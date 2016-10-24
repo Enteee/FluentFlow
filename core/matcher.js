@@ -64,7 +64,7 @@ module.exports = function () {
 
     var isMatching = false;
     return function (obj, cb) {
-      obj = make.immutable(obj || {});
+      obj = make.immutable((!_.isUndefined(obj)) ? obj : {});
       cb = cb || function () {};
       if (!_.isFunction(cb)) throw new Error('cb must be Function');
       if (isMatching) throw new Error('matching is still in progress');
@@ -73,7 +73,10 @@ module.exports = function () {
 
       async.each(states, function (state, cb) {
         var matchCalled = false;
-        state.rule.check(make.mutable(obj), state.prev, state.context,
+        state.rule.check(make.mutable(obj),
+          state.prev,
+          state.context,
+          state.prevContext,
           // match callback
           function (matched) {
             if (matchCalled) cb('match callback already called');
