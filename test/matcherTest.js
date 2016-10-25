@@ -112,7 +112,7 @@ exports.testFollowedBy = function (test) {
         test.equals(p.size, 1);
         test.equals(p.get(0), 42);
         test.ok(o > p.get(0));
-        cb();
+        cb(o > p.get(0));
       }
     ).then(
       (objs, cb) => cb(thenCalls++)
@@ -122,7 +122,7 @@ exports.testFollowedBy = function (test) {
   N.forEach((obj) => ffm(obj, () => cbCalls++));
 
   test.equals(followedByCalls, N.length - 42 - 1);
-  test.equals(thenCalls, 0);
+  test.equals(thenCalls, N.length - 42 - 1);
   test.equals(cbCalls, N.length);
   test.done();
 };
@@ -179,6 +179,23 @@ exports.testForget = function (test) {
 
   test.equals(followedByCalls, 1);
   test.equals(thenCalls, 1);
+  test.done();
+};
+
+exports.testForgetAfterThenException = function (test) {
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => cb(o === 42)
+    ).then(
+      (objs, cb, forget) => {
+        cb();
+        forget(42);
+      }
+    )
+  );
+
+  test.throws(() => N.forEach((obj) => ffm(obj)));
+
   test.done();
 };
 

@@ -1,7 +1,9 @@
 /* global $ */
 [
-  // Check if somebody forked this repository after submitting an issue
-  // Reverse order because the github api displays events in this order
+  /**
+   * Check if somebody forked this repository after submitting an issue.
+   * Reverse order because the github api displays events in this order.
+   */
   $(
     (o, p, c, pc, cb) => {
       cb(o.get('type') === 'ForkEvent');
