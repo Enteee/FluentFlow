@@ -84,7 +84,7 @@ module.exports = function () {
       // we've to clone states because we might 'forget' states during runtime
       async.each(_(states).clone(), function (state, cb) {
         var matchCalled = false;
-        state.rule.check(make.mutable(obj),
+        state.rule.check(obj,
           state.prev,
           state.context,
           state.prevContext,

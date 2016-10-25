@@ -1,5 +1,5 @@
 # FluentFlow
-FluentFlow is matching engine which lets you easily define 'followed by'-relations in a flow of json objects. Rules can be written in javascript as plain functions or using a fluent API.
+FluentFlow is matching engine which lets you easily define 'followed by'-relations in a flow of json objects.
 
 [![Travis](https://img.shields.io/travis/t-moe/FluentFlow.svg)](https://travis-ci.org/t-moe/FluentFlow)
 [![Coverage Status](https://coveralls.io/repos/github/t-moe/FluentFlow/badge.svg)](https://coveralls.io/github/t-moe/FluentFlow)
@@ -27,16 +27,24 @@ OPTIONS:
 Configure rules.js:
 ```javascript
 [
-    // Check if somebody forked this repository after submitting an issue
-    // Reverse order because the github api displays events in this order
-    $.match(function(currentObject) {
-        return currentObject.type == "ForkEvent"
-    }).followedBy.match(function(currentObject, lastObject){
-        return currentObject.type == "IssuesEvent"
-        && currentObject.actor.login == lastObject.actor.login;
-    }).then(function(fork, issue){
-        console.log('User: ' + fork.actor.login + ' forked after writing issue: ' + issue.id);
-    })
+  // Check if somebody forked this repository after submitting an issue.
+  // Reverse order because the github api displays events in this order
+  $(
+    (o, p, c, pc, cb) => {
+      cb(o.get('type') === 'ForkEvent');
+    }
+  ).followedBy(
+    (o, p, c, pc, cb) => cb(
+        o.get('type') === 'IssuesEvent' &&
+        o.get('actor').get('login') === p.get(0).get('actor').get('login')
+    )
+  ).then((objs, cb) => cb(
+    console.log('User: ' +
+      objs.get(1).get('actor').get('login') +
+      ' forked after writing issue: ' +
+      objs.get(0).get('id')
+    )
+  ))
 ];
 ```
 
@@ -44,7 +52,7 @@ Start FluentFlow:
 ```shell
 $ curl -s https://api.github.com/repos/t-moe/FluentFlow/events | fluentflow rules.js -j '*'
 ```
-  * Note: -j '*' because github responds with an array of json objects which we should split before processing
+  * Note: -j '*' because github responds with an array of json objects which we have to split before processing
 
 ## Library
 
@@ -56,71 +64,8 @@ $ npm install --save fluentflow
 ### Usage
 
 ```javascript
-const FluentFlow = require("fluentflow");
-const Fluent = FluentFlow.Fluent;
-const $ = Fluent.Matcher().starter;
-
-// Build the rules
-const builder = new FluentFlow.Matcher.Builder();
-builder.append(
-    $.match(function(obj){return obj.bar===5;}).then(console.log).end(),
-    $.match(function(obj){return !!obj.fooo;}).then(console.log).end()
-);
-
-// Add rules to matcher
-const matcher = new FluentFlow.Matcher();
-matcher.addRules(builder.rules);
-
-// Match objects
-const objects = [
-    {"bar":2},
-    {"bar":5},
-    {"bar":7},
-    {"fooo":42}
-];
-
-objects.forEach(function(obj) {
-    matcher.matchNext(obj);
-});
 ```
 
-#### Fluent API
-
-```javascript
-const FluentFlow = require("fluentflow");
-const Fluent = FluentFlow.Fluent;
-const $ = Fluent.Matcher().starter;
-
-const objectFluent = Fluent.Object({
-    // register fields
-    'bar' : []
-});
-const currentObject = objectFluent.currentObject;
-const lastObject = objectFluent.lastObject;
-
-// Build the rules
-const builder = new FluentFlow.Matcher.Builder();
-builder.append(
-    $.match(currentObject.fieldNamed("bar").equals(5)).then(console.log).end(),
-    $.match(currentObject.fieldNamed("fooo").exists).then(console.log).end()
-);
-
-// Add rules to matcher
-const matcher = new FluentFlow.Matcher();
-matcher.addRules(builder.rules);
-
-// Match objects
-const objects = [
-    {"bar":2},
-    {"bar":5},
-    {"bar":7},
-    {"fooo":42}
-];
-
-objects.forEach(function(obj) {
-    matcher.matchNext(obj);
-});
-```
 #### Sandbox
 
 ```javascript

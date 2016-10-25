@@ -3,11 +3,10 @@
  * Created by timo on 2/26/16.
  */
 const fs = require('fs');
-const path = require('path');
 const argv = require('minimist')(process.argv.slice(2));
 const JSONStream = require('JSONStream');
 const es = require('event-stream');
-const Matchbox = require(path.join(__dirname, '..', 'core', 'matchbox.js'));
+const Matchbox = require('..').Matchbox;
 
 var rulesRaw = '';
 
@@ -73,7 +72,9 @@ if (argv.t) {
 
 process.stdin
   .pipe(JSONStream.parse(jsonPath))
-  .pipe(es.mapSync(function (obj) {
-    matchbox.matchNext(obj);
-    return obj;
+  .pipe(es.through(function (obj, cb) {
+    this.pause();
+    matchbox.matchNext(obj, () => {
+      this.resume();
+    });
   }));
