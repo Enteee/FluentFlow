@@ -59,6 +59,16 @@ module.exports = function () {
         )
     )) throw new Error('chains must be array of Rules');
 
+    // forget callback
+    function forget () {
+      const forgettables = Array.prototype.slice.call(arguments);
+      _.remove(states,
+        s => s.prev.some(
+            o => _(forgettables).includes(o)
+        )
+      );
+    }
+
     // add a state per chain
     chains.forEach((chain) => states.push(new State(chain)));
 
@@ -71,16 +81,9 @@ module.exports = function () {
 
       isMatching = true;
 
-      async.each(states, function (state, cb) {
+      // we've to clone states because we might 'forget' states during runtime
+      async.each(_(states).clone(), function (state, cb) {
         var matchCalled = false;
-
-        // forget callback
-        function forget () {
-          const forgettables = Array.prototype.slice.call(arguments);
-console.log('forgetting: ', forgettables);
-          _(state).remove(o => _(forgettables).some(f => _(f).isEqual(o)));
-        }
-
         state.rule.check(make.mutable(obj),
           state.prev,
           state.context,

@@ -128,6 +128,8 @@ exports.testFollowedBy = function (test) {
 };
 
 exports.testContext = function (test) {
+  var followedByCalls = 0;
+
   const ffm = ff.Matcher(
     ff.Builder(
       (o, p, c, pc, cb) => {
@@ -137,6 +139,7 @@ exports.testContext = function (test) {
       }
     ).followedBy(
       (o, p, c, pc, cb) => {
+        followedByCalls++;
         test.equal(pc.get('n').size, 43);
         pc.get('n').forEach((pc, i) => test.equal(pc, i));
         cb(true);
@@ -145,32 +148,44 @@ exports.testContext = function (test) {
   );
 
   N.forEach((obj) => ffm(obj));
+
+  test.equals(followedByCalls, N.length - 42 - 1);
   test.done();
 };
 
 exports.testForget = function (test) {
+  var followedByCalls = 0;
+  var thenCalls = 0;
+
   const ffm = ff.Matcher(
     ff.Builder(
       (o, p, c, pc, cb) => cb(o === 42)
     ).followedBy(
       (o, p, c, pc, cb, forget) => {
+        followedByCalls++;
         forget(p.get(0));
         cb(true);
       }
     ).then(
       (objs, cb) => {
-console.log(objs);
-//        test.equals(objs.get(0), 43);
+        thenCalls++;
+        test.equals(objs.get(0), 43);
         cb();
       }
     )
   );
 
   N.forEach((obj) => ffm(obj));
+
+  test.equals(followedByCalls, 1);
+  test.equals(thenCalls, 1);
   test.done();
 };
 
 exports.testMultiChain = function (test) {
+  var thenCallsChain1 = 0;
+  var thenCallsChain2 = 0;
+
   const ffm = ff.Matcher(
     ff.Builder(
       (o, p, c, pc, cb) => cb(o === 42)
@@ -178,15 +193,17 @@ exports.testMultiChain = function (test) {
       (o, p, c, pc, cb) => cb(true)
     ).then(
       (objs, cb) => {
-        //test.equals(o.get(0), 43);
+        thenCallsChain1++;
+        test.equals(objs.get(0), 43);
         cb();
       }
     ),
-    // forget after 43
+    // forget 42 when 43 arrives
     ff.Builder(
       (o, p, c, pc, cb) => cb(o === 43)
     ).then(
       (objs, cb, forget) => {
+        thenCallsChain2++;
         forget(42);
         cb();
       }
@@ -194,5 +211,8 @@ exports.testMultiChain = function (test) {
   );
 
   N.forEach((obj) => ffm(obj));
+
+  test.equals(thenCallsChain1, 1);
+  test.equals(thenCallsChain2, 1);
   test.done();
 };

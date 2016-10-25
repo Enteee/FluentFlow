@@ -19,23 +19,17 @@ module.exports = class State {
 
     this.rule = rule;
 
-    if (!_.isUndefined(obj)) {
-      if (!_.isUndefined(prevState) && !_.isUndefined(prevState.prev)) {
-        this.prev = [];
-        prevState.prev.forEach((p) => this.prev.unshift(p));
-        this.prev.unshift(obj);
-        this.prev = make.immutable(this.prev);
-      } else {
-        this.prev = make.immutable([obj]);
-      }
-    } else {
-      if (!_.isUndefined(prevState) && !_.isUndefined(prevState.prev)) {
-        this.prev = prevState.prev;
-      }
+    this.prev = [];
+    if (!_.isUndefined(prevState) && !_.isUndefined(prevState.prev)) {
+      prevState.prev.forEach((p) => this.prev.unshift(p));
     }
+    if (!_.isUndefined(obj)) {
+      this.prev.unshift(obj);
+    }
+    this.prev = make.immutable(this.prev);
+
     if (!_.isUndefined(prevState) && !_.isUndefined(prevState.context)) this.prevContext = make.immutable(prevState.context);
     this.context = {};
   }
 
 };
-

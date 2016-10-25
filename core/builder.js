@@ -14,7 +14,7 @@ module.exports = function () {
     const chain = [];
 
     function build (then) {
-      then = then || function (cb) { cb(); };
+      then = then || function (objs, cb) { cb(); };
       if (!(_.isFunction(then))) throw new Error('then is not a function');
       if (chain.length <= 0) throw new Error('can not build empty chain');
 
