@@ -73,42 +73,49 @@ module.exports = function () {
 
       // we've to clone states because we might 'forget' states during runtime
       async.each(_(states).clone(), function (state, cb) {
-        var thenCbCalled = false;
+        var asyncCbCalled = false;
         var matchCalled = false;
-        function thenCb () {
-          thenCbCalled = true;
-          cb();
+        function asyncCb () {
+          if (asyncCbCalled) throw new Error('async callback called twice');
+          asyncCbCalled = true;
+          cb.apply(this, arguments);
         }
         // forget callback
         function forget () {
-          if (thenCbCalled) throw new Error('forget called after then-callback');
+          if (asyncCbCalled) throw new Error('forget called after then-callback');
           const forgettables = Array.prototype.slice.call(arguments);
           _.remove(states,
             s => s.prev.some(
-                o => _(forgettables).includes(o)
+              o => _(forgettables).includes(o)
             )
           );
         }
-        state.rule.check(obj,
-          state.prev,
-          state.context,
-          state.prevContext,
-          // match callback
-          function (matched) {
-            if (matchCalled) cb('match callback already called');
-            matchCalled = true;
-            if (!matched) return cb();
-            const newState = new State(
-                state.rule.next, obj, state
-            );
-            // push to next rule
-            if (state.rule.next) states.push(newState);
+        function match (matched) {
+          if (matchCalled) return asyncCb(new Error('match callback already called'));
+          matchCalled = true;
+          if (!matched) return asyncCb();
+          const newState = new State(
+            state.rule.next, obj, state
+          );
+          // push to next rule
+          if (state.rule.next) states.push(newState);
+          try {
             state.rule.then(
-              newState.prev, thenCb, forget
+              newState.prev, asyncCb, forget
             );
-          },
-          forget
-        );
+          } catch (e) {
+            asyncCb(e);
+          }
+        }
+        try {
+          state.rule.check(
+            obj, state.prev, state.context, state.prevContext,
+            // callbacks
+            match, forget
+          );
+        } catch (e) {
+          asyncCb(e);
+        }
       }, (err) => {
         if (err) return cb(err);
         isMatching = false;

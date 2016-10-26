@@ -1,12 +1,65 @@
 # FluentFlow
 
-FluentFlow is matching engine which lets you easily define 'followed by'-relations in a flow of [JSON] objects.
+FluentFlow is matching engine which lets you easily define 'followed by'-relations in a flow of JSON objects. You can either use FluentFlow [from the command line](#command-line) or as a JavaScript [library](#library).
 
 [![Travis](https://img.shields.io/travis/t-moe/FluentFlow.svg)](https://travis-ci.org/t-moe/FluentFlow)
 [![Coverage Status](https://coveralls.io/repos/github/t-moe/FluentFlow/badge.svg)](https://coveralls.io/github/t-moe/FluentFlow)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/72b447b11ed140198b1d549680880e13)](https://www.codacy.com/app/timolang/FluentFlow)
 
-## Command line interface
+## Library
+
+### Installation
+
+```shell
+$ npm install --save fluentflow 
+```
+
+### Usage
+
+```javascript
+const ff = require('fluentflow');
+const _ = require('lodash');
+
+/**
+ * Check if there's a number over 9000.
+ */
+const ffm = ff.Matcher(
+  ff.Builder(
+    (o, p, c, pc, cb) => cb(o === 9000)
+  ).followedBy(
+    (o, p, c, pc, cb) => cb(o > p.get(0))
+  ).then(
+    (objs, cb) => cb(console.log(objs))
+  )
+);
+
+_.range(9001).forEach((obj) => ffm(obj));
+```
+
+#### Sandbox (Matchbox)
+
+FluentFlow can be used with string rules:
+
+```javascript
+const Matchbox = require('fluentflow').Matchbox;
+const matchbox = new Matchbox('
+[
+  $(
+    (o, p, c, pc, cb) => cb(o === 9000)
+  ).followedBy(
+    (o, p, c, pc, cb) => cb(o > p.get(0))
+  ).then(
+    (objs, cb) => cb(console.log(objs))
+  )
+]');
+_.range(9001).forEach((obj) => matchbox.matchNext(obj));
+```
+
+* `new Matchbox()` will raise an exception if the chain contains syntax-errors.
+* `matchbox.matchNext()` will run the chain inside a [vm2]-instance.
+* runtime exceptions will be reported via the `matchbox.matchNext()` callback.
+
+## Command line
 
 ### Installation
 
@@ -63,49 +116,6 @@ $ curl -s https://api.github.com/repos/t-moe/FluentFlow/events | fluentflow rule
 
 _Note:_ `-j '*'` splits an array into objects.
 
-## Library
-
-### Installation
-
-```shell
-$ npm install --save fluentflow 
-```
-
-### Usage
-
-```javascript
-const ff = require('fluentflow');
-const _ = require('lodash');
-
-const ffm = ff.Matcher(
-  ff.Builder(
-    (o, p, c, pc, cb) => cb(o === 9000)
-  ).followedBy(
-    (o, p, c, pc, cb) => cb(o > p.get(0))
-  ).then(
-    (objs, cb) => cb(console.log(objs))
-  )
-);
-
-_.range(9001).forEach((obj) => ffm(obj));
-```
-
-#### Sandbox (Matchbox)
-
-```javascript
-const Matchbox = require('fluentflow').Matchbox;
-const matchbox = new Matchbox('
-[
-  $(
-    (o, p, c, pc, cb) => cb(o === 9000)
-  ).followedBy(
-    (o, p, c, pc, cb) => cb(o > p.get(0))
-  ).then(
-    (objs, cb) => cb(console.log(objs))
-  )
-]');
-_.range(9001).forEach((obj) => matchbox.matchNext(obj));
-```
 
 ## Writing chains
 
@@ -115,4 +125,5 @@ _.range(9001).forEach((obj) => matchbox.matchNext(obj));
 $ npm test
 ```
 
-[JSON]:https://de.wikipedia.org/wiki/JavaScript_Object_Notation
+
+[vm2]:https://github.com/patriksimek/vm2

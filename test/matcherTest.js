@@ -17,22 +17,36 @@ exports.testSimpleMatch = function (test) {
     )
   );
 
-  N.forEach((obj) => ffm(obj, () => cbCalls++));
+  N.forEach((obj) => ffm(obj, (err) => {
+    test.ifError(err);
+    cbCalls++;
+  }));
+
   test.equals(thenCalls, 1);
   test.equals(cbCalls, N.length);
   test.done();
 };
 
 exports.testSimpleNoMatch = function (test) {
+  var cbCalls = 0;
+
   const ffm = ff.Matcher(
     ff.Builder(
       (o, p, c, pc, cb) => cb()
     ).then(
-      (objs, cb) => cb(test.ok(false))
+      (objs, cb) => {
+        test.ok(false);
+        cb();
+      }
     )
   );
 
-  N.forEach((obj) => ffm(obj));
+  N.forEach((obj) => ffm(obj, (err) => {
+    test.ifError(err);
+    cbCalls++;
+  }));
+
+  test.equal(cbCalls, N.length);
   test.done();
 };
 
@@ -48,14 +62,18 @@ exports.testSimplAsyncMatch = function (test) {
       )
     ).then(
       (objs, cb) => setTimeout(
-        () => cb(thenCalls++),
+        () => {
+          thenCalls++;
+          cb();
+        },
         1
       )
     )
   );
 
   async.eachSeries(N, (obj, cb) => ffm(obj,
-    () => {
+    (err) => {
+      test.ifError(err);
       cbCalls++;
       cb();
     }),
@@ -68,7 +86,6 @@ exports.testSimplAsyncMatch = function (test) {
 };
 
 exports.testSimplAsyncNoMatch = function (test) {
-  var thenCalls = 0;
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
@@ -79,19 +96,22 @@ exports.testSimplAsyncNoMatch = function (test) {
       )
     ).then(
       (objs, cb) => setTimeout(
-        () => cb(thenCalls++),
+        () => {
+          test.ok(false);
+          cb();
+        },
         1
       )
     )
   );
 
   async.eachSeries(N, (obj, cb) => ffm(obj,
-    () => {
+    (err) => {
+      test.ifError(err);
       cbCalls++;
       cb();
     }),
     () => {
-      test.equals(thenCalls, 0);
       test.equals(cbCalls, N.length);
       test.done();
     }
@@ -115,11 +135,17 @@ exports.testFollowedBy = function (test) {
         cb(o > p.get(0));
       }
     ).then(
-      (objs, cb) => cb(thenCalls++)
+      (objs, cb) => {
+        thenCalls++;
+        cb();
+      }
     )
   );
 
-  N.forEach((obj) => ffm(obj, () => cbCalls++));
+  N.forEach((obj) => ffm(obj, (err) => {
+    test.ifError(err);
+    cbCalls++;
+  }));
 
   test.equals(followedByCalls, N.length - 42 - 1);
   test.equals(thenCalls, N.length - 42 - 1);
@@ -232,4 +258,34 @@ exports.testMultiChain = function (test) {
   test.equals(thenCallsChain1, 1);
   test.equals(thenCallsChain2, 1);
   test.done();
+};
+
+exports.testRuleMatchRuntimException = function (test) {
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => cb(0())
+    ).then()
+  );
+
+  async.eachSeries(N, (obj, cb) => ffm(obj, cb),
+    (err) => {
+      test.ok(!!err);
+      test.done();
+    }
+  );
+};
+
+exports.testRuleThenRuntimException = function (test) {
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => cb(true)
+    ).then(() => 0())
+  );
+
+  async.eachSeries(N, (obj, cb) => ffm(obj, cb),
+    (err) => {
+      test.ok(!!err);
+      test.done();
+    }
+  );
 };
