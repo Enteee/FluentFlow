@@ -11,7 +11,7 @@
  *   ]
  *
  * matchNext(obj, [1]):
- *   thorw error if isMatching
+ *   queue obj if isMatching
  *   obj = immutable(obj)
  *
  *   For each state (async):
@@ -62,65 +62,69 @@ module.exports = function () {
     // add a state per chain
     chains.forEach((chain) => states.push(new State(chain)));
 
-    var isMatching = false;
+    const matchObjQueue = [];
+
     return function (obj, cb) {
       obj = make.immutable((!_.isUndefined(obj)) ? obj : {});
       cb = cb || function () {};
       if (!_.isFunction(cb)) throw new Error('cb must be Function');
-      if (isMatching) throw new Error('matching is still in progress');
 
-      isMatching = true;
+      // add to queue and abort if already matching
+      matchObjQueue.push([obj, cb]);
+      if (matchObjQueue.length > 1) return;
 
-      // we've to clone states because we might 'forget' states during runtime
-      async.each(_(states).clone(), function (state, cb) {
-        var asyncCbCalled = false;
-        var matchCalled = false;
-        function asyncCb () {
-          if (asyncCbCalled) throw new Error('async callback called twice');
-          asyncCbCalled = true;
-          cb.apply(this, arguments);
-        }
-        // forget callback
-        function forget () {
-          if (asyncCbCalled) throw new Error('forget called after then-callback');
-          const forgettables = Array.prototype.slice.call(arguments);
-          _.remove(states,
-            s => s.prev.some(
-              o => _(forgettables).includes(o)
-            )
-          );
-        }
-        function match (matched) {
-          if (matchCalled) return asyncCb(new Error('match callback already called'));
-          matchCalled = true;
-          if (!matched) return asyncCb();
-          const newState = new State(
-            state.rule.next, obj, state
-          );
-          // push to next rule
-          if (state.rule.next) states.push(newState);
+      (function matchObj(obj, cb){
+        // we've to clone states because we might 'forget' states during runtime
+        async.each(_(states).clone(), function (state, cb) {
+          var asyncCbCalled = false;
+          var matchCalled = false;
+          function asyncCb () {
+            if (asyncCbCalled) throw new Error('async callback called twice');
+            asyncCbCalled = true;
+            cb.apply(this, arguments);
+          }
+          // forget callback
+          function forget () {
+            if (asyncCbCalled) throw new Error('forget called after then-callback');
+            const forgettables = Array.prototype.slice.call(arguments);
+            _.remove(states,
+              s => s.prev.some(
+                o => _(forgettables).includes(o)
+              )
+            );
+          }
+          function match (matched) {
+            if (matchCalled) return asyncCb(new Error('match callback already called'));
+            matchCalled = true;
+            if (!matched) return asyncCb();
+            const newState = new State(
+              state.rule.next, obj, state
+            );
+            // push to next rule
+            if (state.rule.next) states.push(newState);
+            try {
+              state.rule.then(
+                newState.prev, asyncCb, forget
+              );
+            } catch (e) {
+              asyncCb(e);
+            }
+          }
           try {
-            state.rule.then(
-              newState.prev, asyncCb, forget
+            state.rule.check(
+              obj, state.prev, state.context, state.prevContext,
+              // callbacks
+              match, forget
             );
           } catch (e) {
             asyncCb(e);
           }
-        }
-        try {
-          state.rule.check(
-            obj, state.prev, state.context, state.prevContext,
-            // callbacks
-            match, forget
-          );
-        } catch (e) {
-          asyncCb(e);
-        }
-      }, (err) => {
-        if (err) return cb(err);
-        isMatching = false;
-        cb();
-      });
+        }, (err) => {
+          if (err) return cb(err);
+          cb();
+          if (matchObjQueue.length > 0) match.apply(this, matchObjQueue.shift());
+        });
+      }).apply(this, matchObjQueue.shift());
     };
   };
 };
