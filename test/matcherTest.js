@@ -139,9 +139,9 @@ exports.testSimplAsyncMatchQueue = function (test) {
 
   async.each(N, (obj, cb) => {
     ffm(obj, (err) => {
-        test.ifError(err);
-        cbCalls++;
-        cb();
+      test.ifError(err);
+      cbCalls++;
+      cb();
     });
   }, () => {
     test.deepEqual(thenObjs, N);
