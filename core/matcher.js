@@ -73,7 +73,7 @@ module.exports = function () {
       matchObjQueue.push([obj, cb]);
       if (matchObjQueue.length > 1) return;
 
-      (function matchObj(obj, cb){
+      (function matchObj (obj, cb) {
         // we've to clone states because we might 'forget' states during runtime
         async.each(_(states).clone(), function (state, cb) {
           var asyncCbCalled = false;
