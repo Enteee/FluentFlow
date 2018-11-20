@@ -31,5 +31,4 @@ module.exports = class State {
     if (!_.isUndefined(prevState) && !_.isUndefined(prevState.context)) this.prevContext = make.immutable(prevState.context);
     this.context = {};
   }
-
 };

@@ -10,7 +10,7 @@
     }
   ).followedBy(
     (o, p, c, pc, cb) => cb(
-        o.get('type') === 'IssuesEvent' &&
+      o.get('type') === 'IssuesEvent' &&
         o.get('actor').get('login') === p.get(0).get('actor').get('login')
     )
   ).then((objs, cb) => cb(

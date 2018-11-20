@@ -53,7 +53,7 @@ module.exports = function () {
     const states = [];
 
     if (!(
-        _.isArray(chains) &&
+      _.isArray(chains) &&
         _.every(chains, (chain) =>
           (chain instanceof Rule)
         )

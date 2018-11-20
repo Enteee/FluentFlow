@@ -77,11 +77,11 @@ exports.testSimplAsyncMatch = function (test) {
       cbCalls++;
       cb();
     }),
-    () => {
-      test.equals(thenCalls, 1);
-      test.equals(cbCalls, N.length);
-      test.done();
-    }
+  () => {
+    test.equals(thenCalls, 1);
+    test.equals(cbCalls, N.length);
+    test.done();
+  }
   );
 };
 
@@ -111,10 +111,10 @@ exports.testSimplAsyncNoMatch = function (test) {
       cbCalls++;
       cb();
     }),
-    () => {
-      test.equals(cbCalls, N.length);
-      test.done();
-    }
+  () => {
+    test.equals(cbCalls, N.length);
+    test.done();
+  }
   );
 };
 

@@ -38,7 +38,7 @@ try {
   if (!fs.statSync(rulesFile).isFile()) {
     throw new Error('rulesFile not a file');
   }
-  rulesRaw = fs.readFileSync(argv._[0], {encoding: 'utf-8'});
+  rulesRaw = fs.readFileSync(argv._[0], { encoding: 'utf-8' });
   if (rulesRaw.length <= 0) {
     throw new Error('rulesFile empty');
   }

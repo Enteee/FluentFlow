@@ -3,11 +3,11 @@
   "main": "index.js",
   "version": "0.3.0",
   "scripts": {
-    "test": "npm run coverage && npm run format",
-    "format": "node node_modules/semistandard/bin/cmd.js",
-    "format-fix": "node node_modules/semistandard/bin/cmd.js --fix",
-    "coverage": "node node_modules/nyc/bin/nyc.js node_modules/nodeunit/bin/nodeunit",
-    "coveralls": "node node_modules/nyc/bin/nyc.js node_modules/nodeunit/bin/nodeunit --reporter=lcov | node node_modules/coveralls/bin/coveralls.js"
+    "test": "nyc nodeunit && semistandard",
+    "format": "semistandard",
+    "format-fix": "semistandard --fix",
+    "coverage": "nyc nodeunit",
+    "coveralls": "nyc nodeunit --reporter=lcov | node node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "JSONStream": "^1.2.1",
