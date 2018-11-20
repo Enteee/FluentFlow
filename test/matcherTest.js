@@ -81,8 +81,7 @@ exports.testSimplAsyncMatch = function (test) {
     test.equals(thenCalls, 1);
     test.equals(cbCalls, N.length);
     test.done();
-  }
-  );
+  });
 };
 
 exports.testSimplAsyncNoMatch = function (test) {
@@ -114,8 +113,73 @@ exports.testSimplAsyncNoMatch = function (test) {
   () => {
     test.equals(cbCalls, N.length);
     test.done();
-  }
+  });
+};
+
+exports.testSimplAsyncMatchQueue = function (test) {
+  var thenObjs = [];
+  var cbCalls = 0;
+
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => setTimeout(
+        () => cb(true),
+        1
+      )
+    ).then(
+      (objs, cb) => setTimeout(
+        () => {
+          thenObjs.push(objs.get(0));
+          cb();
+        },
+        1
+      )
+    )
   );
+
+  async.each(N, (obj, cb) => {
+    ffm(obj, (err) => {
+        test.ifError(err);
+        cbCalls++;
+        cb();
+    });
+  }, () => {
+    test.deepEqual(thenObjs, N);
+    test.equals(cbCalls, N.length);
+    test.done();
+  });
+};
+
+exports.testSimplAsyncNoMatchQueue = function (test) {
+  var cbCalls = 0;
+
+  const ffm = ff.Matcher(
+    ff.Builder(
+      (o, p, c, pc, cb) => setTimeout(
+        () => cb(),
+        1
+      )
+    ).then(
+      (objs, cb) => setTimeout(
+        () => {
+          test.ok(false);
+          cb();
+        },
+        1
+      )
+    )
+  );
+
+  async.each(N, (obj, cb) => ffm(obj,
+    (err) => {
+      test.ifError(err);
+      cbCalls++;
+      cb();
+    }),
+  () => {
+    test.equals(cbCalls, N.length);
+    test.done();
+  });
 };
 
 exports.testFollowedBy = function (test) {
