@@ -44,7 +44,7 @@ FluentFlow can be used with string rules:
 
 ```javascript
 const Matchbox = require('fluentflow').Matchbox;
-const matchbox = new Matchbox('
+const matchbox = new Matchbox(`
 [
   $(
     // Start matching after 9000
@@ -55,7 +55,7 @@ const matchbox = new Matchbox('
   ).then(
     (objs, cb) => cb(console.log(objs))
   )
-]');
+]`);
 _.range(9001).forEach((obj) => matchbox.matchNext(obj));
 ```
 
