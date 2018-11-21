@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CorePath = process.env.GPXPARSE_COV ? 'core-cov' : 'core';
-const Matchbox = require(path.join(__dirname, '..', CorePath, 'matchbox.js'));
+const Matchbox = require('..').Matchbox;
 
 const RULES = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules.js'), {encoding: 'utf-8'});
 const RULES_FAIL_SYNTAX = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failSyntax.js'), {encoding: 'utf-8'});
@@ -110,11 +109,19 @@ exports.testMatchboxMatchSyncRunntimeExceptionInMatch = function (test) {
   const matchbox = new Matchbox(RULES_FAIL_RUNNTIME1, {
     console: 'off'
   });
+
+  var errCount = 0;
+
   objs.forEach(function (obj) {
-    test.throws(function () {
-      matchbox.matchNext({});
+    test.doesNotThrow(function () {
+      matchbox.matchNext({}, (err) => {
+        test.ok(err);
+        errCount++;
+      });
     });
   });
+
+  test.equal(errCount, objs.length);
   test.done();
 };
 
@@ -122,11 +129,19 @@ exports.testMatchboxMatchSyncRunntimeExceptionInThen = function (test) {
   const matchbox = new Matchbox(RULES_FAIL_RUNNTIME2, {
     console: 'off'
   });
+
+  var errCount = 0;
+
   objs.forEach(function (obj) {
-    test.throws(function () {
-      matchbox.matchNext({});
+    test.doesNotThrow(function () {
+      matchbox.matchNext({}, (err) => {
+        test.ok(err);
+        errCount++;
+      });
     });
   });
+
+  test.equal(errCount, objs.length);
   test.done();
 };
 
@@ -134,11 +149,19 @@ exports.testMatchboxMatchAsyncRunntimeExceptionInMatch = function (test) {
   const matchbox = new Matchbox(RULES_FAIL_RUNNTIME1, {
     console: 'off'
   });
+
+  var errCount = 0;
+
   objs.forEach(function (obj) {
-    matchbox.matchNext({}, function (err) {
-      test.ok(err);
+    test.doesNotThrow(function () {
+      matchbox.matchNext({}, function (err) {
+        test.ok(err);
+        errCount++;
+      });
     });
   });
+
+  test.equal(errCount, objs.length);
   test.done();
 };
 
@@ -147,8 +170,10 @@ exports.testMatchboxMatchAsyncRunntimeExceptionInThen = function (test) {
     console: 'off'
   });
   objs.forEach(function (obj) {
-    matchbox.matchNext({}, function (err) {
-      test.ok(err);
+    test.doesNotThrow(function () {
+      matchbox.matchNext({}, function (err) {
+        test.ok(err);
+      });
     });
   });
   test.done();

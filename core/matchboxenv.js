@@ -26,7 +26,7 @@ module.exports = {
     m = ff.Matcher.apply(this, chains);
   },
 
-  matchNext: function (row, cb) {
+  matchNext: function (obj, cb) {
     if (!m) return cb('no chains loaded');
     m.apply(m, arguments);
   }

@@ -8,9 +8,10 @@ function emit () {
 emit();
 
 [
-  $.match(function (obj) {
-    // emit somehting @ evaulation
-    emit();
-    return true; // return true on match
-  }).then(function (obj) {})
+  $(
+    (o, p, c, pc, cb) => {
+      emit()
+      cb(true)
+    }
+  ).then()
 ];

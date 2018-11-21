@@ -1,10 +1,7 @@
 /* global $ */
 
 [
-  $.match(function (obj) {
-    0(); // runntime exception
-    return true;
-  }).then(function (obj) {
-    console.log('match');
-  })
+  $(
+    (o, p, c, pc, cb) => 0() // runntime exception
+  ).then()
 ];
