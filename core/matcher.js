@@ -1,7 +1,5 @@
 /**
  * FluentFlow matching core
- * @author Timo
- * @author Enteee  <ducksource@duckpond.ch>
  *
  * Constructor (chain1, chain2, ...)
  *   chains = [chain1, chain2, ...]

@@ -21,12 +21,14 @@ const ff = require('fluentflow');
 const _ = require('lodash');
 
 /**
- * Check if there's a number over 9000.
+ * Log all numbers greater than 9000.
  */
 const ffm = ff.Matcher(
   ff.Builder(
+    // Start matching after 9000
     (o, p, c, pc, cb) => cb(o === 9000)
   ).followedBy(
+    // Is the next object (o) greater than the previous (p)?
     (o, p, c, pc, cb) => cb(o > p.get(0))
   ).then(
     (objs, cb) => cb(console.log(objs))
@@ -45,8 +47,10 @@ const Matchbox = require('fluentflow').Matchbox;
 const matchbox = new Matchbox('
 [
   $(
+    // Start matching after 9000
     (o, p, c, pc, cb) => cb(o === 9000)
   ).followedBy(
+    // Is the next object (o) greater than the previous (p)?
     (o, p, c, pc, cb) => cb(o > p.get(0))
   ).then(
     (objs, cb) => cb(console.log(objs))

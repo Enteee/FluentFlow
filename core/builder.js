@@ -1,8 +1,3 @@
-/**
- * Chain builder
- * @author Timo
- * @author Enteee  <ducksource@duckpond.ch>
- */
 const _ = require('lodash');
 const path = require('path');
 

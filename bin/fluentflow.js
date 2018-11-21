@@ -1,12 +1,18 @@
-#!/usr/bin/node --harmony-proxies
-/**
- * Created by timo on 2/26/16.
- */
+#!/usr/bin/node
+
 const fs = require('fs');
-const argv = require('minimist')(process.argv.slice(2));
+const minimist = require('minimist');
 const JSONStream = require('JSONStream');
 const es = require('event-stream');
 const Matchbox = require('..').Matchbox;
+
+const argv = minimist(
+  process.argv.slice(2),
+  {
+    string: ['j'],
+    boolean: ['t', 'h']
+  }
+)
 
 var rulesRaw = '';
 
@@ -26,22 +32,18 @@ function showHelp (ret) {
 }
 
 // help
-if (argv.h) {
+if (argv.h)
   showHelp(0);
-}
 
 try {
   var rulesFile = argv._[0];
-  if (typeof rulesFile !== 'string') {
+  if (typeof rulesFile !== 'string')
     throw new Error('rulesFile missing');
-  }
-  if (!fs.statSync(rulesFile).isFile()) {
+  if (!fs.statSync(rulesFile).isFile())
     throw new Error('rulesFile not a file');
-  }
   rulesRaw = fs.readFileSync(argv._[0], { encoding: 'utf-8' });
-  if (rulesRaw.length <= 0) {
+  if (rulesRaw.length <= 0)
     throw new Error('rulesFile empty');
-  }
 } catch (e) {
   console.error(e);
   showHelp(1);
@@ -49,9 +51,8 @@ try {
 
 // Read jsonPath, default: don't split objects (true)
 var jsonPath = true;
-if (argv.j) {
+if (argv.j)
   jsonPath = argv.j;
-}
 
 var matchbox = null;
 try {
@@ -66,9 +67,8 @@ try {
   process.exit(1);
 }
 
-if (argv.t) {
+if (argv.t)
   process.exit(0);
-}
 
 process.stdin
   .pipe(JSONStream.parse(jsonPath))

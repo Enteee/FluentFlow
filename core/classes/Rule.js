@@ -1,7 +1,3 @@
-/**
- * Rule
- * @author Enteee <ducksource@duckpond.ch>
- */
 const _ = require('lodash');
 
 module.exports = class Rule {
