@@ -3,17 +3,17 @@ const path = require('path');
 
 const Matchbox = require('..').Matchbox;
 
-const RULES = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules.js'), {encoding: 'utf-8'});
-const RULES_FAIL_SYNTAX = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failSyntax.js'), {encoding: 'utf-8'});
-const RULES_FAIL_RUNNTIME1 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRunntime1.js'), {encoding: 'utf-8'});
-const RULES_FAIL_RUNNTIME2 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRunntime2.js'), {encoding: 'utf-8'});
-const RULES_EMIT = fs.readFileSync(path.join(__dirname, 'meta', 'emitRules.js'), {encoding: 'utf-8'});
+const RULES = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules.js'), { encoding: 'utf-8' });
+const RULES_FAIL_SYNTAX = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failSyntax.js'), { encoding: 'utf-8' });
+const RULES_FAIL_RUNNTIME1 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRunntime1.js'), { encoding: 'utf-8' });
+const RULES_FAIL_RUNNTIME2 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRunntime2.js'), { encoding: 'utf-8' });
+const RULES_EMIT = fs.readFileSync(path.join(__dirname, 'meta', 'emitRules.js'), { encoding: 'utf-8' });
 
 const objs = [
-  {foo: 1},
-  {foo: 3, bar: 3},
-  {foo: 2},
-  {bar: 1}
+  { foo: 1 },
+  { foo: 3, bar: 3 },
+  { foo: 2 },
+  { bar: 1 }
 ];
 
 exports.testMatchbox = function (test) {

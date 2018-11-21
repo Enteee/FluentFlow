@@ -10,8 +10,8 @@ emit();
 [
   $(
     (o, p, c, pc, cb) => {
-      emit()
-      cb(true)
+      emit();
+      cb(true);
     }
   ).then()
 ];
