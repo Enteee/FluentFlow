@@ -1,0 +1,8 @@
+toc:
+  - name: Callbacks types
+    children:
+      - checkerCallback
+      - thenCallback
+  - name: Helper classes
+    children:
+      - Rule
