@@ -12,7 +12,7 @@ const argv = minimist(
     string: ['j'],
     boolean: ['t', 'h']
   }
-)
+);
 
 var rulesRaw = '';
 
@@ -32,18 +32,14 @@ function showHelp (ret) {
 }
 
 // help
-if (argv.h)
-  showHelp(0);
+if (argv.h) { showHelp(0); }
 
 try {
   var rulesFile = argv._[0];
-  if (typeof rulesFile !== 'string')
-    throw new Error('rulesFile missing');
-  if (!fs.statSync(rulesFile).isFile())
-    throw new Error('rulesFile not a file');
+  if (typeof rulesFile !== 'string') { throw new Error('rulesFile missing'); }
+  if (!fs.statSync(rulesFile).isFile()) { throw new Error('rulesFile not a file'); }
   rulesRaw = fs.readFileSync(argv._[0], { encoding: 'utf-8' });
-  if (rulesRaw.length <= 0)
-    throw new Error('rulesFile empty');
+  if (rulesRaw.length <= 0) { throw new Error('rulesFile empty'); }
 } catch (e) {
   console.error(e);
   showHelp(1);
@@ -51,8 +47,7 @@ try {
 
 // Read jsonPath, default: don't split objects (true)
 var jsonPath = true;
-if (argv.j)
-  jsonPath = argv.j;
+if (argv.j) { jsonPath = argv.j; }
 
 var matchbox = null;
 try {
@@ -67,8 +62,7 @@ try {
   process.exit(1);
 }
 
-if (argv.t)
-  process.exit(0);
+if (argv.t) { process.exit(0); }
 
 process.stdin
   .pipe(JSONStream.parse(jsonPath))

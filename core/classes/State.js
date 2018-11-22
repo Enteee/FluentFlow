@@ -11,7 +11,6 @@ const Rule = require(path.join(__dirname, 'Rule'));
  * @param {State} prevState - State this state originates from.
  */
 module.exports = class State {
-
   constructor (rule, obj, prevState) {
     if (!(_.isUndefined(rule) || rule instanceof Rule)) throw new Error('rule must be Rule');
     if (!(_.isUndefined(prevState) || prevState instanceof State)) throw new Error('prevState must be State');
