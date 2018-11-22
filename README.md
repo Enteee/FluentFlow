@@ -1,6 +1,6 @@
 # FluentFlow
 
-FluentFlow is matching engine which lets you easily define 'followed by'-relations in a flow of JSON objects. You can either use FluentFlow [from the command line](#command-line) or as a JavaScript [library](#library).
+FluentFlow is a [filter language](#language) which lets you easily define 'followed by'-relations in a flow of JSON objects. You can either use FluentFlow [from the command line](#command-line) or as a [JavaScript library](#library).
 
 [![Travis](https://img.shields.io/travis/t-moe/FluentFlow.svg)](https://travis-ci.org/t-moe/FluentFlow)
 [![Coverage Status](https://coveralls.io/repos/github/t-moe/FluentFlow/badge.svg)](https://coveralls.io/github/t-moe/FluentFlow)
@@ -40,7 +40,7 @@ _.range(9001).forEach((obj) => ffm(obj));
 
 #### Sandbox (Matchbox)
 
-FluentFlow can be used with string rules:
+FluentFlow supports evaluating string rules in an isolated environment:
 
 ```javascript
 const Matchbox = require('fluentflow').Matchbox;
@@ -121,7 +121,7 @@ $ curl -s https://api.github.com/repos/t-moe/FluentFlow/events | fluentflow rule
 _Note:_ `-j '*'` splits an array into objects.
 
 
-## Writing chains
+## Language
 
 ## Unit tests
 

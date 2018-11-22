@@ -3,11 +3,14 @@
   "main": "index.js",
   "version": "0.3.0",
   "scripts": {
-    "test": "nyc nodeunit && semistandard",
+    "test": "nyc nodeunit && semistandard && npm run docs-lint && npm audit",
     "format": "semistandard",
     "format-fix": "semistandard --fix",
     "coverage": "nyc nodeunit",
-    "coveralls": "nyc nodeunit --reporter=lcov | node node_modules/coveralls/bin/coveralls.js"
+    "coveralls": "nyc nodeunit --reporter=lcov | node node_modules/coveralls/bin/coveralls.js",
+    "docs-lint": "documentation lint --config documentation.yml core/**",
+    "docs-build": "documentation build --config documentation.yml -f html -o docs core/**",
+    "docs-serve": "documentation serve --watch --config documentation.yml core/**"
   },
   "dependencies": {
     "JSONStream": "^1.2.1",
@@ -22,6 +25,7 @@
   },
   "devDependencies": {
     "coveralls": "^3.0.2",
+    "documentation": "^8.1.2",
     "nodeunit": "^0.11.3",
     "nyc": "^13.1.0",
     "semistandard": "^13.0.1"
@@ -53,7 +57,8 @@
   "homepage": "https://github.com/t-moe/FluentFlow#readme",
   "semistandard": {
     "ignore": [
-      "test/meta/stringRules_failSyntax.js"
+      "test/meta/stringRules_failSyntax.js",
+      "docs/"
     ]
   }
 }
