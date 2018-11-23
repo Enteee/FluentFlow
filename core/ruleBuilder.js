@@ -10,7 +10,7 @@ const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
  * @param {checkerCallback} checker - first checker
  * @returns {RuleBuilder} continue
  * @example
- * const chain = require('fluentflow').RuleBuilder(
+ * const rule = require('fluentflow').RuleBuilder(
  *  (o, p, c, pc, cb, f) => cb(o == 42)
  * ).followedBy(
  *  (o, p, c, pc, cb, f) => cb(o == 9000)

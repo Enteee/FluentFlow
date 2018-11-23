@@ -10,13 +10,14 @@ const MATCHBOX_ENV = path.join(__dirname, 'matchboxenv.js');
 const MATCHBOX_ENV_BUILTINS = ['path'];
 
 /**
- * Runs {@link Matcher} in a isolated environment.
+ * Generates isolated matchers ({@link matchNext}) for the given {@link Rule}(s).
  * @function Matchbox
  * @param {String} rulesRaw - a string of rules
  * @param {Object} [vmoptions] - options to {@link https://www.npmjs.com/package/vm2|vm2}
- * @returns {Matcher} - an isolated {@link Matcher}
+ * @returns {matchNext} - an isolated {@link matchNext}
  * @example
- * const chain = require('fluentflow').Matchbox(`
+ * const _ = require('lodash');
+ * const ffm = require('fluentflow').Matchbox(`
  *  [
  *    $(
  *      (o, p, c, pc, cb, f) => cb(o == 42)
@@ -28,7 +29,9 @@ const MATCHBOX_ENV_BUILTINS = ['path'];
  *      )
  *    )
  *  ]
- * `); // prints [42, 9000]
+ * `);
+ * // match some objects
+ * _.range(9001).forEach((obj) => ffm(obj)); // prints [42, 9000]
  * @example
  */
 module.exports = function (rulesRaw, vmoptions) {

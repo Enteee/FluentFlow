@@ -27,15 +27,26 @@ const State = require(path.join(__dirname, CLASS_DIR, 'State'));
 
 /**
  * Generates matchers ({@link matchNext}) for the given {@link Rule}(s).
- * @class Matcher
+ * @function Matcher
  * @param {...Rule} rule - Rule(s) to match against.
  * @returns {matchNext} a new matcher
  * @example
- * const ffm = require('fluentflow').Matcher();
+ * const _ = require('lodash');
+ * const ff = require('fluentflow');
+ * const $ = ff.RuleBuilder;
+ * const ffm = ff.Matcher(
+ *  $(
+ *     (o, p, c, pc, cb, f) => cb(o == 42)
+ *   ).followedBy(
+ *     (o, p, c, pc, cb, f) => cb(o == 9000)
+ *   ).then(
+ *     (objs, cb) => cb(
+ *       console.log(objs)
+ *     )
+ *   )
+ * );
  * // match some objects
- * ffm(42);
- * ffm(9000, ()=>console.log('done')); // prints done
- * ffm({});
+ * _.range(9001).forEach((obj) => ffm(obj)); // prints [42, 9000]
  * @example
  */
 module.exports = function () {
