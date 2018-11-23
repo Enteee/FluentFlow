@@ -6,11 +6,11 @@ const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
 
 /**
  * Builds {@link Rule}.
- * @function Builder
+ * @class RuleBuilder
  * @param {checkerCallback} checker - first checker
- * @returns {Builder} continue
+ * @returns {RuleBuilder} continue
  * @example
- * const chain = require('fluentflow').Builder(
+ * const chain = require('fluentflow').RuleBuilder(
  *  (o, p, c, pc, cb, f) => cb(o == 42)
  * ).followedBy(
  *  (o, p, c, pc, cb, f) => cb(o == 9000)
@@ -29,19 +29,19 @@ module.exports = function () {
     chain.push(checker);
 
     return {
-      /** @lends Builder */
+      /** @lends RuleBuilder.prototype */
 
       /**
        * Add a new checker.
        * @function
        * @param {checkerCallback} checker - next checker
-       * @returns {Builder} continue
+       * @returns {RuleBuilder} continue
        */
       followedBy: addToChain,
 
       /**
        * Finishes and builds the chain.
-       * @param {thenCallback} then - build the Rule
+       * @param {thenCallback} [then] - run if rule matches
        * @returns {Rule} finish
        */
       then: function (then) {

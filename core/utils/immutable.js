@@ -1,11 +1,13 @@
 /**
  * Helpers for mutability switching
+ * @private
  */
 
 const immutableJS = require('immutable');
 
 /**
  * from: https://github.com/facebook/immutable-js/wiki/Converting-from-JS-objects
+ * @private
  */
 function fromJSGreedy (js) {
   return typeof js !== 'object' || js === null
@@ -16,6 +18,7 @@ function fromJSGreedy (js) {
 
 /**
  * from: https://github.com/facebook/immutable-js/wiki/Converting-from-JS-objects
+ * @private
  */
 /* eslint-disable no-unused-vars */
 function fromJSOrdered (js) {

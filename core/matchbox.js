@@ -7,13 +7,32 @@ const esprima = require('esprima');
 'use strict';
 
 const MATCHBOX_ENV = path.join(__dirname, 'matchboxenv.js');
-const MATCHBOX_ENV_HIDDEN_PROPERTIES = [ 'load', 'setConsole' ];
 const MATCHBOX_ENV_BUILTINS = ['path'];
 
 /**
- * Matchbox
+ * Runs {@link Matcher} in a isolated environment.
+ * @function Matchbox
+ * @param {String} rulesRaw - a string of rules
+ * @param {Object} [vmoptions] - options to {@link https://www.npmjs.com/package/vm2|vm2}
+ * @returns {Matcher} - an isolated {@link Matcher}
+ * @example
+ * const chain = require('fluentflow').Matchbox(`
+ *  [
+ *    $(
+ *      (o, p, c, pc, cb, f) => cb(o == 42)
+ *    ).followedBy(
+ *      (o, p, c, pc, cb, f) => cb(o == 9000)
+ *    ).then(
+ *      (objs, cb) => cb(
+ *        console.log(objs)
+ *      )
+ *    )
+ *  ]
+ * `); // prints [42, 9000]
+ * @example
  */
 module.exports = function (rulesRaw, vmoptions) {
+  rulesRaw = rulesRaw || '[]';
   vmoptions = vmoptions || {};
   vmoptions.require = vmoptions.require || {};
   vmoptions.require.external = true;
@@ -33,14 +52,5 @@ module.exports = function (rulesRaw, vmoptions) {
     }
   }
   const matchbox = vm.run(fs.readFileSync(MATCHBOX_ENV), __filename);
-  matchbox.load(rulesRaw);
-  // delte all hidden properties
-  MATCHBOX_ENV_HIDDEN_PROPERTIES.forEach(function (p) {
-    delete matchbox[p];
-  });
-  return new Proxy(matchbox, {
-    apply: function (target, thisArg, argumentsList) {
-      thisArg[target](argumentsList);
-    }
-  });
+  return matchbox(rulesRaw);
 };

@@ -5,29 +5,18 @@ const ff = require('.');
 const CLASS_DIR = 'classes';
 const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
 
-var m = false;
+/**
+ * Load rules.
+ * @private
+ * @param {String} rulesRaw - rules to load
+ */
+module.exports = function load (rulesRaw) {
+  rulesRaw = rulesRaw || '';
 
-// somehow we can not ovewrite global.console might be node.js related
-var console = global.console; // eslint-disable-line no-unused-vars
+  const $ = ff.RuleBuilder; // eslint-disable-line no-unused-vars
+  const chains = eval(rulesRaw); // eslint-disable-line no-eval
+  if (!(chains instanceof Array)) throw new Error('chains not Array');
+  if (!(chains.filter(r => !(r instanceof Rule)))) throw new Error('chain not a Rule');
 
-module.exports = {
-  setConsole: function (newConsole) {
-    console = newConsole;
-  },
-
-  load: function (rulesRaw) {
-    rulesRaw = rulesRaw || '';
-
-    const $ = ff.Builder; // eslint-disable-line no-unused-vars
-    const chains = eval(rulesRaw); // eslint-disable-line no-eval
-    if (!(chains instanceof Array)) throw new Error('chains not Array');
-    if (!(chains.filter(r => !(r instanceof Rule)))) throw new Error('chain not a Rule');
-
-    m = ff.Matcher.apply(this, chains);
-  },
-
-  matchNext: function (obj, cb) {
-    if (!m) return cb('no chains loaded');
-    m.apply(m, arguments);
-  }
+  return ff.Matcher.apply(null, chains);
 };

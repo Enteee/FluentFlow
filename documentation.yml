@@ -6,3 +6,8 @@ toc:
   - name: Helper classes
     children:
       - Rule
+  - RuleBuilder
+  - Matcher
+  - Matchbox
+  - matchNext
+

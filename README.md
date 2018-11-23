@@ -18,13 +18,14 @@ $ npm install --save fluentflow
 
 ```javascript
 const ff = require('fluentflow');
+const $ = ff.RuleBuilder
 const _ = require('lodash');
 
 /**
  * Log all numbers greater than 9000.
  */
 const ffm = ff.Matcher(
-  ff.Builder(
+  $(
     // Start matching after 9000
     (o, p, c, pc, cb) => cb(o === 9000)
   ).followedBy(
@@ -43,8 +44,7 @@ _.range(9001).forEach((obj) => ffm(obj));
 FluentFlow supports evaluating string rules in an isolated environment:
 
 ```javascript
-const Matchbox = require('fluentflow').Matchbox;
-const matchbox = new Matchbox(`
+const matchbox = new require('fluentflow').Matchbox(`
 [
   $(
     // Start matching after 9000

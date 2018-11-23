@@ -2,6 +2,7 @@ const _ = require('lodash');
 const async = require('async');
 
 const ff = require('..');
+const $ = ff.RuleBuilder
 
 const N = _.range(100);
 
@@ -10,7 +11,7 @@ exports.testSimpleMatch = function (test) {
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(o === 42)
     ).then(
       (objs, cb) => cb(thenCalls++)
@@ -31,7 +32,7 @@ exports.testSimpleNoMatch = function (test) {
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb()
     ).then(
       (objs, cb) => {
@@ -55,7 +56,7 @@ exports.testSimplAsyncMatch = function (test) {
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => setTimeout(
         () => cb(o === 42),
         1
@@ -88,7 +89,7 @@ exports.testSimplAsyncNoMatch = function (test) {
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => setTimeout(
         () => cb(),
         1
@@ -121,7 +122,7 @@ exports.testSimplAsyncMatchQueue = function (test) {
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => setTimeout(
         () => cb(true),
         1
@@ -154,7 +155,7 @@ exports.testSimplAsyncNoMatchQueue = function (test) {
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => setTimeout(
         () => cb(),
         1
@@ -188,7 +189,7 @@ exports.testFollowedBy = function (test) {
   var cbCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(o === 42)
     ).followedBy(
       (o, p, c, pc, cb) => {
@@ -221,7 +222,7 @@ exports.testContext = function (test) {
   var followedByCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => {
         if (!c.n) c.n = [];
         c.n = c.n.concat(o);
@@ -248,7 +249,7 @@ exports.testForget = function (test) {
   var thenCalls = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(o === 42)
     ).followedBy(
       (o, p, c, pc, cb, forget) => {
@@ -274,7 +275,7 @@ exports.testForget = function (test) {
 
 exports.testForgetAfterThenException = function (test) {
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(o === 42)
     ).then(
       (objs, cb, forget) => {
@@ -294,7 +295,7 @@ exports.testMultiChain = function (test) {
   var thenCallsChain2 = 0;
 
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(o === 42)
     ).followedBy(
       (o, p, c, pc, cb) => cb(true)
@@ -306,7 +307,7 @@ exports.testMultiChain = function (test) {
       }
     ),
     // forget 42 when 43 arrives
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(o === 43)
     ).then(
       (objs, cb, forget) => {
@@ -326,7 +327,7 @@ exports.testMultiChain = function (test) {
 
 exports.testRuleMatchRuntimException = function (test) {
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(0())
     ).then()
   );
@@ -341,7 +342,7 @@ exports.testRuleMatchRuntimException = function (test) {
 
 exports.testRuleThenRuntimException = function (test) {
   const ffm = ff.Matcher(
-    ff.Builder(
+    $(
       (o, p, c, pc, cb) => cb(true)
     ).then(() => 0())
   );

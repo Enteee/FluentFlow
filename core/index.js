@@ -1,5 +1,5 @@
 module.exports = {
-  Builder: require('./builder'),
+  RuleBuilder: require('./ruleBuilder'),
   Matcher: require('./matcher'),
   Matchbox: require('./matchbox')
 };
