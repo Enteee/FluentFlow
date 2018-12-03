@@ -1,0 +1,26 @@
+toc:
+  - name: FluentFlow
+    file: docs/FluentFlow.md
+  - name: Library
+    file: docs/Library.md
+  - name: Command Line
+    file: docs/CommandLine.md
+  - name: Testing
+    file: docs/Testing.md
+  - name: API
+    description: |
+      documentation on [github-pages](https://duckpond.ch)
+    children:
+    - ffm
+    - Matcher
+    - Matchbox
+    - name: Callbacks Types
+      children:
+        - checkerCallback
+        - thenCallback
+        - errorFirstCallback
+    - name: Helper Classes
+      children:
+        - Rule
+        - RuleBuilder
+

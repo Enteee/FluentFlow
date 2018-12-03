@@ -1,0 +1,1152 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8' />
+  <title>fluentflow 0.3.0 | Documentation</title>
+  <meta name='viewport' content='width=device-width,initial-scale=1'>
+  <link href='assets/bass.css' type='text/css' rel='stylesheet' />
+  <link href='assets/style.css' type='text/css' rel='stylesheet' />
+  <link href='assets/github.css' type='text/css' rel='stylesheet' />
+  <link href='assets/split.css' type='text/css' rel='stylesheet' />
+  <meta name='description' content='FluentFlow is matching engine which lets you easily define &#39;followed by&#39;-relations in a flow of objects. Rules can be written in javascript as plain functions or using a fluent API.'>
+</head>
+<body class='documentation m0'>
+    <div class='flex'>
+      <div id='split-left' class='overflow-auto fs0 height-viewport-100'>
+        <div class='py1 px2'>
+          <h3 class='mb0 no-anchor'>fluentflow</h3>
+          <div class='mb1'><code>0.3.0</code></div>
+          <input
+            placeholder='Filter'
+            id='filter-input'
+            class='col12 block input'
+            type='text' />
+          <div id='toc'>
+            <ul class='list-reset h5 py1-ul'>
+              
+                
+                <li><a
+                  href='#ffm'
+                  class="">
+                  ffm
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#matcher'
+                  class="">
+                  Matcher
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#matchbox'
+                  class="">
+                  Matchbox
+                  
+                </a>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#callbacks-types'
+                  class="h5 bold black caps toggle-sibling">
+                  Callbacks Types
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#checkercallback'
+                        class='regular pre-open'>
+                        .checkerCallback
+                      </a></li>
+                    
+                      <li><a
+                        href='#thencallback'
+                        class='regular pre-open'>
+                        .thenCallback
+                      </a></li>
+                    
+                      <li><a
+                        href='#errorfirstcallback'
+                        class='regular pre-open'>
+                        .errorFirstCallback
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+                
+                <li><a
+                  href='#helper-classes'
+                  class="h5 bold black caps toggle-sibling">
+                  Helper Classes
+                  <span class='icon'>▸</span>
+                </a>
+                
+                <div class='toggle-target display-none'>
+                  
+                  <ul class='list-reset py1-ul pl1'>
+                    <li class='h5'><span>Static members</span></li>
+                    
+                      <li><a
+                        href='#rule'
+                        class='regular pre-open'>
+                        .Rule
+                      </a></li>
+                    
+                      <li><a
+                        href='#rulebuilder'
+                        class='regular pre-open'>
+                        .RuleBuilder
+                      </a></li>
+                    
+                    </ul>
+                  
+                  
+                  
+                  
+                </div>
+                
+                </li>
+              
+            </ul>
+          </div>
+          <div class='mt1 h6 quiet'>
+            <a href='http://documentation.js.org/reading-documentation.html'>Need help reading this?</a>
+          </div>
+        </div>
+      </div>
+      <div id='split-right' class='relative overflow-auto height-viewport-100'>
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='ffm'>
+      ffm
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Matching core. Built using the JavaScript API using a <a href="#matcher">Matcher</a>
+or from a <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a> in a <a href="#matchbox">Matchbox</a>.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>ffm(obj: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, cb: <a href="#errorfirstcallback">errorFirstCallback</a>?)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>obj</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    next 
+<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>
+ to match
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>cb</span> <code class='quiet'>(<a href="#errorfirstcallback">errorFirstCallback</a>?)</code>
+	    callback after matching finishes
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='matcher'>
+      Matcher
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Generates the matcher (<a href="#ffm">ffm</a>) for the given <a href="#rule">Rule</a>(s).</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>Matcher(rule: ...<a href="#rule">Rule</a>): <a href="#ffm">ffm</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>rule</span> <code class='quiet'>(...<a href="#rule">Rule</a>)</code>
+	    Rule(s) to match against.
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#ffm">ffm</a></code>:
+        a new matcher
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">const</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>);
+<span class="hljs-keyword">const</span> ff = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fluentflow'</span>);
+<span class="hljs-keyword">const</span> $ = ff.RuleBuilder;
+<span class="hljs-keyword">const</span> ffm = ff.Matcher(
+ $(
+    (o, p, c, pc, cb, f) =&gt; cb(o == <span class="hljs-number">42</span>)
+  ).followedBy(
+    <span class="hljs-function">(<span class="hljs-params">o, p, c, pc, cb, f</span>) =&gt;</span> cb(o == <span class="hljs-number">9000</span>)
+  ).then(
+    <span class="hljs-function">(<span class="hljs-params">objs, cb</span>) =&gt;</span> cb(
+      <span class="hljs-built_in">console</span>.log(objs)
+    )
+  )
+);
+<span class="hljs-comment">// match some objects</span>
+_.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-function">(<span class="hljs-params">obj</span>) =&gt;</span> ffm(obj)); <span class="hljs-comment">// prints [42, 9000]</span></pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='matchbox'>
+      Matchbox
+    </h3>
+    
+    
+  </div>
+  
+
+  <p>Generates the isolated matcher (<a href="#ffm">ffm</a>) for the given <a href="#rule">Rule</a>(s).</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>Matchbox(rulesRaw: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, vmoptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="#ffm">ffm</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>rulesRaw</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+	    a string of rules
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>vmoptions</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?)</code>
+	    options to 
+<a href="https://www.npmjs.com/package/vm2">vm2</a>
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#ffm">ffm</a></code>:
+        an isolated 
+<a href="#ffm">ffm</a>
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">const</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>);
+<span class="hljs-keyword">const</span> ffm = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fluentflow'</span>).Matchbox(<span class="hljs-string">`
+ [
+   $(
+     (o, p, c, pc, cb, f) =&gt; cb(o == 42)
+   ).followedBy(
+     (o, p, c, pc, cb, f) =&gt; cb(o == 9000)
+   ).then(
+     (objs, cb) =&gt; cb(
+       console.log(objs)
+     )
+   )
+ ]
+`</span>);
+<span class="hljs-comment">// match some objects</span>
+_.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-function">(<span class="hljs-params">obj</span>) =&gt;</span> ffm(obj)); <span class="hljs-comment">// prints [42, 9000]</span></pre>
+    
+  
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+            <div class='keyline-top-not py2'></div>
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='callbacks-types'>
+      Callbacks Types
+    </h3>
+    
+    
+  </div>
+  
+
+  
+
+ 
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='checkercallback'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>checkerCallback(o, p, c, pc, cb, f)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Checks if an <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a> matches.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>checkerCallback(o: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, p: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, c: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, pc: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, cb: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>, f: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>o</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    the object to check
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>p</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    the previous object
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>c</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    the matching context
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>pc</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    the matching context from the previous state
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>cb</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+	    match callback, true if matches false othrewise
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>f</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+	    forget callback
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='thencallback'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>thenCallback(objs, cb)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Called each time a sequence of <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>s matches a <a href="#rule">Rule</a> in a <a href="#ffm">ffm</a></p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>thenCallback(objs: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>, cb: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>objs</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array">Array</a>)</code>
+	    the matched objects
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>cb</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+	    asynchronous callback
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='errorfirstcallback'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>errorFirstCallback(Error, data)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Standard node.js callback type.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>errorFirstCallback(Error: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, data: ...<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</div>
+   
+  
+    <p>
+      Type:
+      <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>
+    </p>
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>Error</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    Truthy if an error occured
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>data</span> <code class='quiet'>(...<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>)</code>
+	    data
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+        
+          
+            <div class='keyline-top-not py2'></div>
+          
+          <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+  <div class='clearfix'>
+    
+    <h3 class='fl m0' id='helper-classes'>
+      Helper Classes
+    </h3>
+    
+    
+  </div>
+  
+
+  
+
+ 
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Static Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='rule'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>new Rule(check, next)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>new Rule(check: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>, next: <a href="#rule">Rule</a>)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>check</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+	    checker function
+
+          </div>
+          
+        </div>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>next</span> <code class='quiet'>(<a href="#rule">Rule</a>)</code>
+	    next rule
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='rulesetthen'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>setThen(then)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  
+ 
+  
+    <div class='pre p1 fill-light mt0'>setThen(then: <a href="#thencallback">thenCallback</a>)</div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>then</span> <code class='quiet'>(<a href="#thencallback">thenCallback</a>)</code>
+	    match callback
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='rulebuilder'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>new RuleBuilder(checker)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Builds <a href="#rule">Rule</a>.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>new RuleBuilder(checker: <a href="#checkercallback">checkerCallback</a>): <a href="#rulebuilder">RuleBuilder</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>checker</span> <code class='quiet'>(<a href="#checkercallback">checkerCallback</a>)</code>
+	    first checker
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#rulebuilder">RuleBuilder</a></code>:
+        continue
+
+      
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Example</div>
+    
+      
+      <pre class='p1 overflow-auto round fill-light'><span class="hljs-keyword">const</span> rule = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fluentflow'</span>).RuleBuilder(
+ <span class="hljs-function">(<span class="hljs-params">o, p, c, pc, cb, f</span>) =&gt;</span> cb(o == <span class="hljs-number">42</span>)
+).followedBy(
+ <span class="hljs-function">(<span class="hljs-params">o, p, c, pc, cb, f</span>) =&gt;</span> cb(o == <span class="hljs-number">9000</span>)
+).then(
+ <span class="hljs-function">(<span class="hljs-params">objs, cb</span>) =&gt;</span> cb(
+   <span class="hljs-built_in">console</span>.log(objs)
+ )
+); <span class="hljs-comment">// prints [42, 9000]</span></pre>
+    
+  
+
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Instance Members</div>
+    <div class="clearfix">
+  
+    <div class='border-bottom' id='rulebuilderfollowedby'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>followedBy(checker)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Add a new checker.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>followedBy(checker: <a href="#checkercallback">checkerCallback</a>): <a href="#rulebuilder">RuleBuilder</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>checker</span> <code class='quiet'>(<a href="#checkercallback">checkerCallback</a>)</code>
+	    next checker
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#rulebuilder">RuleBuilder</a></code>:
+        continue
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+    <div class='border-bottom' id='rulebuilderthen'>
+      <div class="clearfix small pointer toggle-sibling">
+        <div class="py1 contain">
+            <a class='icon pin-right py1 dark-link caret-right'>▸</a>
+            <span class='code strong strong truncate'>then(then?)</span>
+        </div>
+      </div>
+      <div class="clearfix display-none toggle-target">
+        <section class='p2 mb2 clearfix bg-white minishadow'>
+
+  
+
+  <p>Finishes and builds the chain.</p>
+
+ 
+  
+    <div class='pre p1 fill-light mt0'>then(then: <a href="#thencallback">thenCallback</a>?): <a href="#rule">Rule</a></div>
+   
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+    <div class='py1 quiet mt1 prose-big'>Parameters</div>
+    <div class='prose'>
+      
+        <div class='space-bottom0'>
+          <div>
+            <span class='code bold'>then</span> <code class='quiet'>(<a href="#thencallback">thenCallback</a>?)</code>
+	    run if rule matches
+
+          </div>
+          
+        </div>
+      
+    </div>
+  
+
+  
+
+  
+    
+      <div class='py1 quiet mt1 prose-big'>Returns</div>
+      <code><a href="#rule">Rule</a></code>:
+        finish
+
+      
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+</section>
+
+      </div>
+    </div>
+  
+</div>
+
+  
+
+  
+
+  
+</section>
+
+        
+      </div>
+    </div>
+  <script src='assets/anchor.js'></script>
+  <script src='assets/split.js'></script>
+  <script src='assets/site.js'></script>
+</body>
+</html>

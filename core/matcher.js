@@ -8,28 +8,28 @@ const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
 const State = require(path.join(__dirname, CLASS_DIR, 'State'));
 
 /**
- * The callback used to check if an object matches.
+ * Checks if an {@link Object} matches.
  * @callback checkerCallback
- * @param {object} o - the object to check
- * @param {object} p - the previous object
- * @param {object} c - the matching context
- * @param {object} pc - the matching context from the previous state
+ * @param {Object} o - the object to check
+ * @param {Object} p - the previous object
+ * @param {Object} c - the matching context
+ * @param {Object} pc - the matching context from the previous state
  * @param {Function} cb - match callback, true if matches false othrewise
  * @param {Function} f - forget callback
  */
 
 /**
- * The callback used to check if an object matches.
- * @callback thenCallback
- * @param {Array} objs - the matched objects
- * @param {Function} cb - callback
+ * Standard node.js callback type.
+ * @callback errorFirstCallback
+ * @param {Object} Error - Truthy if an error occured
+ * @param {...Object} data - data
  */
 
 /**
- * Generates matchers ({@link matchNext}) for the given {@link Rule}(s).
+ * Generates the matcher ({@link ffm}) for the given {@link Rule}(s).
  * @function Matcher
  * @param {...Rule} rule - Rule(s) to match against.
- * @returns {matchNext} a new matcher
+ * @returns {ffm} a new matcher
  * @example
  * const _ = require('lodash');
  * const ff = require('fluentflow');
@@ -47,7 +47,6 @@ const State = require(path.join(__dirname, CLASS_DIR, 'State'));
  * );
  * // match some objects
  * _.range(9001).forEach((obj) => ffm(obj)); // prints [42, 9000]
- * @example
  */
 module.exports = function () {
   const rules = Array.prototype.slice.call(arguments);
@@ -66,11 +65,13 @@ module.exports = function () {
   const matchObjQueue = [];
 
   /**
-   * Matching core.
-   * @param {object} obj - next object
-   * @param {Function} [cb] - callback after matching finishes
+   * Matching core. Built using the JavaScript API using a {@link Matcher}
+   * or from a {@link String} in a {@link Matchbox}.
+   * @function
+   * @param {Object} obj - next {@link Object} to match
+   * @param {errorFirstCallback} [cb] - callback after matching finishes
    */
-  return function matchNext (obj, cb) {
+  return function ffm (obj, cb) {
     obj = make.immutable((!_.isUndefined(obj)) ? obj : {});
     cb = cb || function () {};
     if (!_.isFunction(cb)) throw new Error('cb must be Function');

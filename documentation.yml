@@ -1,13 +1,14 @@
 toc:
-  - name: Callbacks types
+  - ffm
+  - Matcher
+  - Matchbox
+  - name: Callbacks Types
     children:
       - checkerCallback
       - thenCallback
-  - name: Helper classes
+      - errorFirstCallback
+  - name: Helper Classes
     children:
       - Rule
-  - RuleBuilder
-  - Matcher
-  - Matchbox
-  - matchNext
+      - RuleBuilder
 

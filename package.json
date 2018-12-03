@@ -8,8 +8,10 @@
     "format-fix": "semistandard --fix",
     "coverage": "nyc nodeunit",
     "coveralls": "nyc nodeunit --reporter=lcov | node node_modules/coveralls/bin/coveralls.js",
-    "docs-lint": "documentation lint --config documentation.yml core/**",
-    "docs-build": "documentation build --config documentation.yml -f html -o docs core/**",
+    "docs-lint": "documentation lint core/**",
+    "docs-build": "npm run docs-build-md && npm run docs-build-html",
+    "docs-build-md": "documentation build --config documentation-md.yml --markdown-toc false -f md -o README.md core/**",
+    "docs-build-html": "documentation build --config documentation.yml -f html -o docs core/**",
     "docs-serve": "documentation serve --watch --config documentation.yml core/**"
   },
   "dependencies": {

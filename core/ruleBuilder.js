@@ -5,6 +5,13 @@ const CLASS_DIR = 'classes';
 const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
 
 /**
+ * Called each time a sequence of {@link Object}s matches a {@link Rule} in a {@link ffm}
+ * @callback thenCallback
+ * @param {Array} objs - the matched objects
+ * @param {Function} cb - asynchronous callback
+ */
+
+/**
  * Builds {@link Rule}.
  * @class RuleBuilder
  * @param {checkerCallback} checker - first checker
@@ -19,7 +26,6 @@ const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
  *    console.log(objs)
  *  )
  * ); // prints [42, 9000]
- * @example
  */
 module.exports = function () {
   const chain = [];
