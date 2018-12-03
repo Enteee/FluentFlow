@@ -47,7 +47,7 @@ const ffm = require('fluentflow').Matchbox(`
     (objs, cb) => cb(console.log(objs))
   )
 ]`);
-_.range(9001).forEach((obj) => ffm(obj));
+_.range(9002).forEach((obj) => ffm(obj));
 ```
 
 * `new Matchbox()` will raise an exception if the chain contains syntax-errors.

@@ -60,7 +60,7 @@ const ffm = require('fluentflow').Matchbox(`
     (objs, cb) => cb(console.log(objs))
   )
 ]`);
-_.range(9001).forEach((obj) => ffm(obj));
+_.range(9002).forEach((obj) => ffm(obj));
 ```
 
 -   `new Matchbox()` will raise an exception if the chain contains syntax-errors.
@@ -331,7 +331,7 @@ Returns **[Rule][18]** finish
 
 [8]: https://api.codacy.com/project/badge/grade/72b447b11ed140198b1d549680880e13
 
-[9]: https://duckpond.ch
+[9]: https://enteee.github.io/FluentFlow/
 
 [10]: #matcher
 
