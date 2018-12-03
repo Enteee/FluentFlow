@@ -9,7 +9,7 @@ toc:
     file: docs/Testing.md
   - name: API
     description: |
-      documentation on [github-pages](https://enteee.github.io/FluentFlow/)
+      [Documentation on github-pages](https://enteee.github.io/FluentFlow/)
     children:
     - ffm
     - Matcher

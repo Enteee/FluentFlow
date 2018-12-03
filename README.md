@@ -135,7 +135,7 @@ $ npm test
 
 ## API
 
-documentation on [github-pages][9]
+[Documentation on github-pages][9]
 
 
 ### ffm
