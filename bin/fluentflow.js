@@ -37,7 +37,7 @@ if (argv.h) { showHelp(0); }
 try {
   var rulesFile = argv._[0];
   if (typeof rulesFile !== 'string') { throw new Error('rulesFile missing'); }
-  if (!fs.statSync(rulesFile).isFile()) { throw new Error('rulesFile not a file'); }
+  if (!fs.statSync(rulesFile).isFile()) { throw new Error('rulesFile ('+rulesFile+') not a file'); }
   rulesRaw = fs.readFileSync(argv._[0], { encoding: 'utf-8' });
   if (rulesRaw.length <= 0) { throw new Error('rulesFile empty'); }
 } catch (e) {
@@ -68,7 +68,7 @@ process.stdin
   .pipe(JSONStream.parse(jsonPath))
   .pipe(es.through(function (obj, cb) {
     this.pause();
-    matchbox.matchNext(obj, () => {
+    matchbox(obj, () => {
       this.resume();
     });
   }));
