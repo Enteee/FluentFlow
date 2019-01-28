@@ -23,7 +23,7 @@
     "lodash": "^4.16.4",
     "minimist": "^1.2.0",
     "uglify-js2": "^2.1.11",
-    "vm2": "^3.6.4"
+    "vm2": "^3.6.10"
   },
   "devDependencies": {
     "coveralls": "^3.0.2",

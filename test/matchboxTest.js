@@ -21,7 +21,7 @@ exports.testMatchbox = function (test) {
     console: 'off'
   });
   objs.forEach(function (obj) {
-    matchbox.matchNext(obj);
+    matchbox(obj);
   });
   test.done();
 };
@@ -65,7 +65,7 @@ exports.testMatchboxNoVM = function (test) {
     console: 'off'
   });
   objs.forEach(function (obj) {
-    matchbox.matchNext(obj);
+    matchbox(obj);
   });
   test.done();
 };
@@ -114,7 +114,7 @@ exports.testMatchboxMatchSyncRunntimeExceptionInMatch = function (test) {
 
   objs.forEach(function (obj) {
     test.doesNotThrow(function () {
-      matchbox.matchNext({}, (err) => {
+      matchbox({}, (err) => {
         test.ok(err);
         errCount++;
       });
@@ -134,7 +134,7 @@ exports.testMatchboxMatchSyncRunntimeExceptionInThen = function (test) {
 
   objs.forEach(function (obj) {
     test.doesNotThrow(function () {
-      matchbox.matchNext({}, (err) => {
+      matchbox({}, (err) => {
         test.ok(err);
         errCount++;
       });
@@ -154,7 +154,7 @@ exports.testMatchboxMatchAsyncRunntimeExceptionInMatch = function (test) {
 
   objs.forEach(function (obj) {
     test.doesNotThrow(function () {
-      matchbox.matchNext({}, function (err) {
+      matchbox({}, function (err) {
         test.ok(err);
         errCount++;
       });
@@ -171,7 +171,7 @@ exports.testMatchboxMatchAsyncRunntimeExceptionInThen = function (test) {
   });
   objs.forEach(function (obj) {
     test.doesNotThrow(function () {
-      matchbox.matchNext({}, function (err) {
+      matchbox({}, function (err) {
         test.ok(err);
       });
     });
