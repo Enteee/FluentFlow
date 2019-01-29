@@ -51,7 +51,7 @@ _.range(9002).forEach((obj) => ffm(obj));
 ```
 
 * `new Matchbox()` will raise an exception if the chain contains syntax-errors.
-* `matchbox.matchNext()` will run the chain inside a [vm2]-instance.
-* runtime exceptions will be reported via the `matchbox.matchNext()` callback.
+* `ffm()` will run the chain inside a [vm2]-instance.
+* runtime exceptions will be reported via the `ffm()` callback: `ffm(obj, (err) => { console.log(err) } );`
 
 [vm2]:https://github.com/patriksimek/vm2
