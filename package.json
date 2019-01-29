@@ -59,7 +59,8 @@
   "homepage": "https://github.com/t-moe/FluentFlow#readme",
   "semistandard": {
     "ignore": [
-      "test/meta/stringRules_failSyntax.js",
+      "rules.js",
+      "test/meta/",
       "docs/"
     ]
   }
