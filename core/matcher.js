@@ -14,8 +14,8 @@ const State = require(path.join(__dirname, CLASS_DIR, 'State'));
  * @param {Object} p - the previous object
  * @param {Object} c - the matching context
  * @param {Object} pc - the matching context from the previous state
- * @param {Function} cb - match callback, true if matches false othrewise
- * @param {Function} f - forget callback
+ * @param {Function} match - match callback, true if matches false othrewise
+ * @param {Function} forget - forget callback, forget all states including objects passed as arguments
  */
 
 /**
@@ -36,11 +36,11 @@ const State = require(path.join(__dirname, CLASS_DIR, 'State'));
  * const $ = ff.RuleBuilder;
  * const ffm = ff.Matcher(
  *  $(
- *     (o, p, c, pc, cb, f) => cb(o == 42)
+ *     (o, p, c, pc, match, f) => match(o == 42)
  *   ).followedBy(
- *     (o, p, c, pc, cb, f) => cb(o == 9000)
+ *     (o, p, c, pc, match, f) => match(o == 9000)
  *   ).then(
- *     (objs, cb) => cb(
+ *     (objs, next) => next(
  *       console.log(objs)
  *     )
  *   )
@@ -77,26 +77,27 @@ module.exports = function () {
     cb = cb || function () {};
     if (!_.isFunction(cb)) throw new Error('cb must be Function');
 
-    // add to queue and abort if already matching
+    // add to queue and abort if matching in progress
     matchObjQueue.push([obj, cb]);
     if (isMatching) return;
     isMatching = true;
 
-    (function matchNextObj () {
+    function matchNextObj () {
       const [obj, cb] = matchObjQueue.shift();
 
       // we've to clone states because we might 'forget' states during runtime
       async.each(_(states).clone(), function (state, cb) {
-        var asyncCbCalled = false;
-        var matchCalled = false;
-        function asyncCb () {
-          if (asyncCbCalled) throw new Error('async callback called twice');
-          asyncCbCalled = true;
-          cb.apply(this, arguments);
+        // Remove all states which contain any of the objects
+        // provided to the forget function as argument.
+        var nextCalled = false;
+        function next () {
+          if (nextCalled) throw new Error('next callback already called');
+          nextCalled = true;
+          cb();
         }
-        // forget callback
+
         function forget () {
-          if (asyncCbCalled) throw new Error('forget called after then-callback');
+          if (nextCalled) throw new Error('can not forget after next was already called');
           const forgettables = Array.prototype.slice.call(arguments);
           _.remove(states,
             s => s.prev.some(
@@ -104,10 +105,12 @@ module.exports = function () {
             )
           );
         }
+
+        var matchCalled = false;
         function match (matched) {
-          if (matchCalled) return asyncCb(new Error('match callback already called'));
+          if (matchCalled) return new Error('match callback already called');
           matchCalled = true;
-          if (!matched) return asyncCb();
+          if (!matched) return next();
           const newState = new State(
             state.rule.next, obj, state
           );
@@ -115,10 +118,12 @@ module.exports = function () {
           if (state.rule.next) states.push(newState);
           try {
             state.rule.then(
-              newState.prev, asyncCb, forget
+              newState.prev,
+              // callbacks
+              next, forget
             );
           } catch (e) {
-            asyncCb(e);
+            cb(e);
           }
         }
         try {
@@ -128,7 +133,7 @@ module.exports = function () {
             match, forget
           );
         } catch (e) {
-          asyncCb(e);
+          cb(e);
         }
       }, (err) => {
         if (err) cb(err);
@@ -143,6 +148,7 @@ module.exports = function () {
         // continue matching
         matchNextObj();
       });
-    }).apply(this);
+    }
+    matchNextObj();
   };
 };

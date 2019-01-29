@@ -280,11 +280,11 @@ or from a <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 <span class="hljs-keyword">const</span> $ = ff.RuleBuilder;
 <span class="hljs-keyword">const</span> ffm = ff.Matcher(
  $(
-    (o, p, c, pc, cb, f) =&gt; cb(o == <span class="hljs-number">42</span>)
+    (o, p, c, pc, match, f) =&gt; match(o == <span class="hljs-number">42</span>)
   ).followedBy(
-    <span class="hljs-function">(<span class="hljs-params">o, p, c, pc, cb, f</span>) =&gt;</span> cb(o == <span class="hljs-number">9000</span>)
+    <span class="hljs-function">(<span class="hljs-params">o, p, c, pc, match, f</span>) =&gt;</span> match(o == <span class="hljs-number">9000</span>)
   ).then(
-    <span class="hljs-function">(<span class="hljs-params">objs, cb</span>) =&gt;</span> cb(
+    <span class="hljs-function">(<span class="hljs-params">objs, next</span>) =&gt;</span> next(
       <span class="hljs-built_in">console</span>.log(objs)
     )
   )
@@ -320,7 +320,7 @@ _.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-functio
 
  
   
-    <div class='pre p1 fill-light mt0'>Matchbox(rulesRaw: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>, vmoptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="#ffm">ffm</a></div>
+    <div class='pre p1 fill-light mt0'>Matchbox(rulesRaw: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>, vmoptions: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>?): <a href="#ffm">ffm</a></div>
    
   
   
@@ -338,7 +338,7 @@ _.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-functio
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>rulesRaw</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">String</a>)</code>
+            <span class='code bold'>rulesRaw</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String">string</a>)</code>
 	    a string of rules
 
           </div>
@@ -381,11 +381,11 @@ _.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-functio
 <span class="hljs-keyword">const</span> ffm = <span class="hljs-built_in">require</span>(<span class="hljs-string">'fluentflow'</span>).Matchbox(<span class="hljs-string">`
  [
    $(
-     (o, p, c, pc, cb, f) =&gt; cb(o == 42)
+     (o, p, c, pc, match, forget) =&gt; match(o == 42)
    ).followedBy(
-     (o, p, c, pc, cb, f) =&gt; cb(o == 9000)
+     (o, p, c, pc, match, forget) =&gt; match(o == 9000)
    ).then(
-     (objs, cb) =&gt; cb(
+     (objs, next) =&gt; next(
        console.log(objs)
      )
    )
@@ -452,7 +452,7 @@ _.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-functio
       <div class="clearfix small pointer toggle-sibling">
         <div class="py1 contain">
             <a class='icon pin-right py1 dark-link caret-right'>▸</a>
-            <span class='code strong strong truncate'>checkerCallback(o, p, c, pc, cb, f)</span>
+            <span class='code strong strong truncate'>checkerCallback(o, p, c, pc, match, forget)</span>
         </div>
       </div>
       <div class="clearfix display-none toggle-target">
@@ -464,7 +464,7 @@ _.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-functio
 
  
   
-    <div class='pre p1 fill-light mt0'>checkerCallback(o: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, p: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, c: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, pc: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, cb: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>, f: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</div>
+    <div class='pre p1 fill-light mt0'>checkerCallback(o: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, p: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, c: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, pc: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object">Object</a>, match: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>, forget: <a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</div>
    
   
     <p>
@@ -523,7 +523,7 @@ _.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-functio
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>cb</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+            <span class='code bold'>match</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
 	    match callback, true if matches false othrewise
 
           </div>
@@ -532,8 +532,8 @@ _.range(<span class="hljs-number">9001</span>).forEach(<span class="hljs-functio
       
         <div class='space-bottom0'>
           <div>
-            <span class='code bold'>f</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
-	    forget callback
+            <span class='code bold'>forget</span> <code class='quiet'>(<a href="https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function">Function</a>)</code>
+	    forget callback, forget all states including objects passed as arguments
 
           </div>
           

@@ -9,9 +9,9 @@ emit();
 
 [
   $(
-    (o, p, c, pc, cb) => {
+    (o, p, c, pc, match) => {
       emit();
-      cb(true);
+      match(true);
     }
   ).then()
 ];

@@ -8,7 +8,7 @@ const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
 /**
  * Load rules.
  * @private
- * @param {String} rulesRaw - rules to load
+ * @param {string} rulesRaw - rules to load
  */
 module.exports = function load (rulesRaw) {
   rulesRaw = rulesRaw || '';

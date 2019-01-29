@@ -12,9 +12,9 @@ exports.testSimpleMatch = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb(o === 42)
+      (o, p, c, pc, match) => match(o === 42)
     ).then(
-      (objs, cb) => cb(thenCalls++)
+      (objs, next) => next(thenCalls++)
     )
   );
 
@@ -33,11 +33,11 @@ exports.testSimpleNoMatch = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb()
+      (o, p, c, pc, match) => match()
     ).then(
-      (objs, cb) => {
+      (objs, next) => {
         test.ok(false);
-        cb();
+        next();
       }
     )
   );
@@ -57,15 +57,15 @@ exports.testSimplAsyncMatch = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => setTimeout(
-        () => cb(o === 42),
+      (o, p, c, pc, match) => setTimeout(
+        () => match(o === 42),
         1
       )
     ).then(
-      (objs, cb) => setTimeout(
+      (objs, next) => setTimeout(
         () => {
           thenCalls++;
-          cb();
+          next();
         },
         1
       )
@@ -90,15 +90,15 @@ exports.testSimplAsyncNoMatch = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => setTimeout(
-        () => cb(),
+      (o, p, c, pc, match) => setTimeout(
+        () => match(),
         1
       )
     ).then(
-      (objs, cb) => setTimeout(
+      (objs, next) => setTimeout(
         () => {
           test.ok(false);
-          cb();
+          next();
         },
         1
       )
@@ -124,20 +124,20 @@ exports.testSimplAsyncMatchQueue = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => {
+      (o, p, c, pc, match) => {
         test.ok(!isMatching);
         isMatching = true;
         setTimeout(
-          () => cb(true),
+          () => match(true),
           1
         );
       }
     ).then(
-      (objs, cb) => setTimeout(
+      (objs, next) => setTimeout(
         () => {
           isMatching = false;
           thenObjs.push(objs.get(0));
-          cb();
+          next();
         },
         1
       )
@@ -164,19 +164,19 @@ exports.testFollowedBy = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb(o === 42)
+      (o, p, c, pc, match) => match(o === 42)
     ).followedBy(
-      (o, p, c, pc, cb) => {
+      (o, p, c, pc, match) => {
         followedByCalls++;
         test.equals(p.size, 1);
         test.equals(p.get(0), 42);
         test.ok(o > p.get(0));
-        cb(o > p.get(0));
+        match(o > p.get(0));
       }
     ).then(
-      (objs, cb) => {
+      (objs, next) => {
         thenCalls++;
-        cb();
+        next();
       }
     )
   );
@@ -197,17 +197,17 @@ exports.testContext = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => {
+      (o, p, c, pc, match) => {
         if (!c.n) c.n = [];
         c.n = c.n.concat(o);
-        cb(o === 42);
+        match(o === 42);
       }
     ).followedBy(
-      (o, p, c, pc, cb) => {
+      (o, p, c, pc, match) => {
         followedByCalls++;
         test.equal(pc.get('n').size, 43);
         pc.get('n').forEach((pc, i) => test.equal(pc, i));
-        cb(true);
+        match(true);
       }
     ).then()
   );
@@ -224,18 +224,18 @@ exports.testForget = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb(o === 42)
+      (o, p, c, pc, match) => match(o === 42)
     ).followedBy(
-      (o, p, c, pc, cb, forget) => {
+      (o, p, c, pc, match, forget) => {
         followedByCalls++;
         forget(p.get(0));
-        cb(true);
+        match(true);
       }
     ).then(
-      (objs, cb) => {
+      (objs, next) => {
         thenCalls++;
         test.equals(objs.get(0), 43);
-        cb();
+        next();
       }
     )
   );
@@ -247,13 +247,13 @@ exports.testForget = function (test) {
   test.done();
 };
 
-exports.testForgetAfterThenException = function (test) {
+exports.testForgetAfterNextException = function (test) {
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb(o === 42)
+      (o, p, c, pc, match) => match(o === 42)
     ).then(
-      (objs, cb, forget) => {
-        cb();
+      (objs, next, forget) => {
+        next();
         forget(42);
       }
     )
@@ -270,24 +270,24 @@ exports.testMultiChain = function (test) {
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb(o === 42)
+      (o, p, c, pc, match) => match(o === 42)
     ).followedBy(
-      (o, p, c, pc, cb) => cb(true)
+      (o, p, c, pc, match) => match(true)
     ).then(
-      (objs, cb) => {
+      (objs, next) => {
         thenCallsChain1++;
         test.equals(objs.get(0), 43);
-        cb();
+        next();
       }
     ),
     // forget 42 when 43 arrives
     $(
-      (o, p, c, pc, cb) => cb(o === 43)
+      (o, p, c, pc, match) => match(o === 43)
     ).then(
-      (objs, cb, forget) => {
+      (objs, next, forget) => {
         thenCallsChain2++;
         forget(42);
-        cb();
+        next();
       }
     )
   );
@@ -302,7 +302,7 @@ exports.testMultiChain = function (test) {
 exports.testRuleMatchRuntimException = function (test) {
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb(0())
+      (o, p, c, pc, match) => match(0())
     ).then()
   );
 
@@ -317,7 +317,7 @@ exports.testRuleMatchRuntimException = function (test) {
 exports.testRuleThenRuntimException = function (test) {
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => cb(true)
+      (o, p, c, pc, match) => match(true)
     ).then(() => 0())
   );
 

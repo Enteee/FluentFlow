@@ -27,15 +27,15 @@ Configure rules.js:
    * Reverse order because the github api displays events in this order.
    */
   $(
-    (o, p, c, pc, cb) => {
-      cb(o.get('type') === 'ForkEvent');
+    (o, p, c, pc, match) => {
+      match(o.get('type') === 'ForkEvent');
     }
   ).followedBy(
-    (o, p, c, pc, cb) => cb(
+    (o, p, c, pc, match) => match(
         o.get('type') === 'IssuesEvent' &&
         o.get('actor').get('login') === p.get(0).get('actor').get('login')
     )
-  ).then((objs, cb) => cb(
+  ).then((objs, next) => next(
     console.log('User: ' +
       objs.get(1).get('actor').get('login') +
       ' forked after writing issue: ' +

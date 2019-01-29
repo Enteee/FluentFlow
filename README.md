@@ -30,12 +30,12 @@ const _ = require('lodash');
 const ffm = ff.Matcher(
   $(
     // Start matching after 9000
-    (o, p, c, pc, cb) => cb(o === 9000)
+    (o, p, c, pc, match) => match(o === 9000)
   ).followedBy(
     // Is the next object (o) greater than the previous (p)?
-    (o, p, c, pc, cb) => cb(o > p.get(0))
+    (o, p, c, pc, match) => match(o > p.get(0))
   ).then(
-    (objs, cb) => cb(console.log(objs))
+    (objs, next) => next(console.log(objs))
   )
 );
 
@@ -52,12 +52,12 @@ const ffm = require('fluentflow').Matchbox(`
 [
   $(
     // Start matching after 9000
-    (o, p, c, pc, cb) => cb(o === 9000)
+    (o, p, c, pc, match) => match(o === 9000)
   ).followedBy(
     // Is the next object (o) greater than the previous (p)?
-    (o, p, c, pc, cb) => cb(o > p.get(0))
+    (o, p, c, pc, match) => match(o > p.get(0))
   ).then(
-    (objs, cb) => cb(console.log(objs))
+    (objs, next) => next(console.log(objs))
   )
 ]`);
 _.range(9002).forEach((obj) => ffm(obj));
@@ -99,15 +99,15 @@ Configure rules.js:
    * Reverse order because the github api displays events in this order.
    */
   $(
-    (o, p, c, pc, cb) => {
-      cb(o.get('type') === 'ForkEvent');
+    (o, p, c, pc, match) => {
+      match(o.get('type') === 'ForkEvent');
     }
   ).followedBy(
-    (o, p, c, pc, cb) => cb(
+    (o, p, c, pc, match) => match(
         o.get('type') === 'IssuesEvent' &&
         o.get('actor').get('login') === p.get(0).get('actor').get('login')
     )
-  ).then((objs, cb) => cb(
+  ).then((objs, next) => next(
     console.log('User: ' +
       objs.get(1).get('actor').get('login') +
       ' forked after writing issue: ' +
@@ -164,11 +164,11 @@ const ff = require('fluentflow');
 const $ = ff.RuleBuilder;
 const ffm = ff.Matcher(
  $(
-    (o, p, c, pc, cb, f) => cb(o == 42)
+    (o, p, c, pc, match, f) => match(o == 42)
   ).followedBy(
-    (o, p, c, pc, cb, f) => cb(o == 9000)
+    (o, p, c, pc, match, f) => match(o == 9000)
   ).then(
-    (objs, cb) => cb(
+    (objs, next) => next(
       console.log(objs)
     )
   )
@@ -185,7 +185,7 @@ Generates the isolated matcher ([ffm][16]) for the given [Rule][17](s).
 
 #### Parameters
 
--   `rulesRaw` **[String][20]** a string of rules
+-   `rulesRaw` **[string][20]** a string of rules
 -   `vmoptions` **[Object][13]?** options to [vm2][21]
 
 #### Examples
@@ -195,11 +195,11 @@ const _ = require('lodash');
 const ffm = require('fluentflow').Matchbox(`
  [
    $(
-     (o, p, c, pc, cb, f) => cb(o == 42)
+     (o, p, c, pc, match, forget) => match(o == 42)
    ).followedBy(
-     (o, p, c, pc, cb, f) => cb(o == 9000)
+     (o, p, c, pc, match, forget) => match(o == 9000)
    ).then(
-     (objs, cb) => cb(
+     (objs, next) => next(
        console.log(objs)
      )
    )
@@ -228,8 +228,8 @@ Type: [Function][22]
 -   `p` **[Object][13]** the previous object
 -   `c` **[Object][13]** the matching context
 -   `pc` **[Object][13]** the matching context from the previous state
--   `cb` **[Function][22]** match callback, true if matches false othrewise
--   `f` **[Function][22]** forget callback
+-   `match` **[Function][22]** match callback, true if matches false othrewise
+-   `forget` **[Function][22]** forget callback, forget all states including objects passed as arguments
 
 #### thenCallback
 

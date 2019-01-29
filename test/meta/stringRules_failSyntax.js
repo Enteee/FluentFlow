@@ -2,7 +2,7 @@
 
 [
   $(
-    (o, p, c, pc, cb) => cb(true)
+    (o, p, c, pc, match) => match(true)
   ).then()
   ----->>>> THIS IS A SYNTAX ERROR!!!! <<<-----
 ];

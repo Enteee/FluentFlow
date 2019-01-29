@@ -10,7 +10,7 @@ const MATCHBOX_ENV_BUILTINS = ['path'];
 /**
  * Generates the isolated matcher ({@link ffm}) for the given {@link Rule}(s).
  * @function Matchbox
- * @param {String} rulesRaw - a string of rules
+ * @param {string} rulesRaw - a string of rules
  * @param {Object} [vmoptions] - options to {@link https://www.npmjs.com/package/vm2|vm2}
  * @returns {ffm} - an isolated {@link ffm}
  * @example
@@ -18,11 +18,11 @@ const MATCHBOX_ENV_BUILTINS = ['path'];
  * const ffm = require('fluentflow').Matchbox(`
  *  [
  *    $(
- *      (o, p, c, pc, cb, f) => cb(o == 42)
+ *      (o, p, c, pc, match, forget) => match(o == 42)
  *    ).followedBy(
- *      (o, p, c, pc, cb, f) => cb(o == 9000)
+ *      (o, p, c, pc, match, forget) => match(o == 9000)
  *    ).then(
- *      (objs, cb) => cb(
+ *      (objs, next) => next(
  *        console.log(objs)
  *      )
  *    )

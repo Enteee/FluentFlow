@@ -17,12 +17,12 @@ const _ = require('lodash');
 const ffm = ff.Matcher(
   $(
     // Start matching after 9000
-    (o, p, c, pc, cb) => cb(o === 9000)
+    (o, p, c, pc, match) => match(o === 9000)
   ).followedBy(
     // Is the next object (o) greater than the previous (p)?
-    (o, p, c, pc, cb) => cb(o > p.get(0))
+    (o, p, c, pc, match) => match(o > p.get(0))
   ).then(
-    (objs, cb) => cb(console.log(objs))
+    (objs, next) => next(console.log(objs))
   )
 );
 
@@ -39,12 +39,12 @@ const ffm = require('fluentflow').Matchbox(`
 [
   $(
     // Start matching after 9000
-    (o, p, c, pc, cb) => cb(o === 9000)
+    (o, p, c, pc, match) => match(o === 9000)
   ).followedBy(
     // Is the next object (o) greater than the previous (p)?
-    (o, p, c, pc, cb) => cb(o > p.get(0))
+    (o, p, c, pc, match) => match(o > p.get(0))
   ).then(
-    (objs, cb) => cb(console.log(objs))
+    (objs, next) => next(console.log(objs))
   )
 ]`);
 _.range(9002).forEach((obj) => ffm(obj));
