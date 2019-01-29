@@ -8,7 +8,8 @@ const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
  * Called each time a sequence of {@link Object}s matches a {@link Rule} in a {@link ffm}
  * @callback thenCallback
  * @param {Array} objs - the matched objects
- * @param {Function} cb - asynchronous callback
+ * @param {next} next - end of callback. Continue matching next object
+ * @param {forget} forget - forget objects.
  */
 
 /**
@@ -18,11 +19,11 @@ const Rule = require(path.join(__dirname, CLASS_DIR, 'Rule'));
  * @returns {RuleBuilder} continue
  * @example
  * const rule = require('fluentflow').RuleBuilder(
- *  (o, p, c, pc, cb, f) => cb(o == 42)
+ *  (o, p, c, pc, match, forget) => match(o === 42)
  * ).followedBy(
- *  (o, p, c, pc, cb, f) => cb(o == 9000)
+ *  (o, p, c, pc, match, forget) => match(o === 9000)
  * ).then(
- *  (objs, cb) => cb(
+ *  (objs, next) => next(
  *    console.log(objs)
  *  )
  * ); // prints [42, 9000]

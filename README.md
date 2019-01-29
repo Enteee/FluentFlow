@@ -211,7 +211,7 @@ _.range(9001).forEach((obj) => ffm(obj)); // prints [42, 9000]
 
 Returns **[ffm][19]** an isolated [ffm][16]
 
-### Callbacks Types
+### Callback Types
 
 
 
@@ -228,8 +228,8 @@ Type: [Function][22]
 -   `p` **[Object][13]** the previous object
 -   `c` **[Object][13]** the matching context
 -   `pc` **[Object][13]** the matching context from the previous state
--   `match` **[Function][22]** match callback, true if matches false othrewise
--   `forget` **[Function][22]** forget callback, forget all states including objects passed as arguments
+-   `match` **[match][23]** match callback, true if matches false otherwise
+-   `forget` **[forget][24]** forget callback, forget all states including objects passed as arguments
 
 #### thenCallback
 
@@ -239,19 +239,34 @@ Type: [Function][22]
 
 ##### Parameters
 
--   `objs` **[Array][23]** the matched objects
--   `cb` **[Function][22]** asynchronous callback
+-   `objs` **[Array][25]** the matched objects
+-   `next` **[next][26]** end of callback. Continue matching next object
+-   `forget` **[forget][24]** forget objects.
 
-#### errorFirstCallback
+### Signal Types
 
-Standard node.js callback type.
 
-Type: [Function][22]
+
+
+#### match
+
+Signal the result of a matching operation.
 
 ##### Parameters
 
--   `Error` **[Object][13]** Truthy if an error occured
--   `data` **...[Object][13]** data
+-   `matched` **[Boolean][27]?** true if matched, false otherwise. Default if omitted: false.
+
+#### next
+
+Signal the end of a {@link thenCallback.
+
+#### forget
+
+Signal the intent to forget an object. Must be called before [next][28].
+
+##### Parameters
+
+-   `obj` **...[Object][13]** the object(s) to forget
 
 ### Helper Classes
 
@@ -269,7 +284,7 @@ Type: [Function][22]
 
 ###### Parameters
 
--   `then` **[thenCallback][24]** match callback
+-   `then` **[thenCallback][29]** match callback
 
 #### RuleBuilder
 
@@ -277,23 +292,23 @@ Builds [Rule][17].
 
 ##### Parameters
 
--   `checker` **[checkerCallback][25]** first checker
+-   `checker` **[checkerCallback][30]** first checker
 
 ##### Examples
 
 ```javascript
 const rule = require('fluentflow').RuleBuilder(
- (o, p, c, pc, cb, f) => cb(o == 42)
+ (o, p, c, pc, match, forget) => match(o === 42)
 ).followedBy(
- (o, p, c, pc, cb, f) => cb(o == 9000)
+ (o, p, c, pc, match, forget) => match(o === 9000)
 ).then(
- (objs, cb) => cb(
+ (objs, next) => next(
    console.log(objs)
  )
 ); // prints [42, 9000]
 ```
 
-Returns **[RuleBuilder][26]** continue
+Returns **[RuleBuilder][31]** continue
 
 ##### followedBy
 
@@ -301,9 +316,9 @@ Add a new checker.
 
 ###### Parameters
 
--   `checker` **[checkerCallback][25]** next checker
+-   `checker` **[checkerCallback][30]** next checker
 
-Returns **[RuleBuilder][26]** continue
+Returns **[RuleBuilder][31]** continue
 
 ##### then
 
@@ -311,9 +326,25 @@ Finishes and builds the chain.
 
 ###### Parameters
 
--   `then` **[thenCallback][24]?** run if rule matches
+-   `then` **[thenCallback][29]?** run if rule matches
 
 Returns **[Rule][18]** finish
+
+### Generic Types
+
+
+
+
+#### errorFirstCallback
+
+Standard node.js callback type.
+
+Type: [Function][22]
+
+##### Parameters
+
+-   `Error` **[Object][13]** Truthy if an error occured
+-   `data` **...[Object][13]** data
 
 [1]: #command-line
 
@@ -359,10 +390,20 @@ Returns **[Rule][18]** finish
 
 [22]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
 
-[23]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[23]: #match
 
-[24]: #thencallback
+[24]: #forget
 
-[25]: #checkercallback
+[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[26]: #rulebuilder
+[26]: #next
+
+[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+
+[28]: #next
+
+[29]: #thencallback
+
+[30]: #checkercallback
+
+[31]: #rulebuilder

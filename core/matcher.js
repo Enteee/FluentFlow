@@ -14,8 +14,8 @@ const State = require(path.join(__dirname, CLASS_DIR, 'State'));
  * @param {Object} p - the previous object
  * @param {Object} c - the matching context
  * @param {Object} pc - the matching context from the previous state
- * @param {Function} match - match callback, true if matches false othrewise
- * @param {Function} forget - forget callback, forget all states including objects passed as arguments
+ * @param {match} match - match callback, true if matches false otherwise
+ * @param {forget} forget - forget callback, forget all states including objects passed as arguments
  */
 
 /**
@@ -87,16 +87,21 @@ module.exports = function () {
 
       // we've to clone states because we might 'forget' states during runtime
       async.each(_(states).clone(), function (state, cb) {
-        // Remove all states which contain any of the objects
-        // provided to the forget function as argument.
         var nextCalled = false;
+        /**
+         * Signal the end of a {@link thenCallback.
+         */
         function next () {
           if (nextCalled) throw new Error('next callback already called');
           nextCalled = true;
           cb();
         }
 
-        function forget () {
+        /**
+         * Signal the intent to forget an object. Must be called before {@link next}.
+         * @param {...Object} obj - the object(s) to forget
+         */
+        function forget (obj) {
           if (nextCalled) throw new Error('can not forget after next was already called');
           const forgettables = Array.prototype.slice.call(arguments);
           _.remove(states,
@@ -107,6 +112,10 @@ module.exports = function () {
         }
 
         var matchCalled = false;
+        /**
+         * Signal the result of a matching operation.
+         * @param {?Boolean} matched - true if matched, false otherwise. Default if omitted: false.
+         */
         function match (matched) {
           if (matchCalled) return new Error('match callback already called');
           matchCalled = true;
@@ -126,6 +135,7 @@ module.exports = function () {
             cb(e);
           }
         }
+
         try {
           state.rule.check(
             obj, state.prev, state.context, state.prevContext,
