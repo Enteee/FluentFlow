@@ -2,7 +2,7 @@ const _ = require('lodash');
 const async = require('async');
 
 const ff = require('..');
-const $ = ff.RuleBuilder
+const $ = ff.RuleBuilder;
 
 const N = _.range(100);
 
@@ -120,16 +120,22 @@ exports.testSimplAsyncNoMatch = function (test) {
 exports.testSimplAsyncMatchQueue = function (test) {
   var thenObjs = [];
   var cbCalls = 0;
+  var isMatching = false;
 
   const ffm = ff.Matcher(
     $(
-      (o, p, c, pc, cb) => setTimeout(
-        () => cb(true),
-        1
-      )
+      (o, p, c, pc, cb) => {
+        test.ok(!isMatching);
+        isMatching = true;
+        setTimeout(
+          () => cb(true),
+          1
+        );
+      }
     ).then(
       (objs, cb) => setTimeout(
         () => {
+          isMatching = false;
           thenObjs.push(objs.get(0));
           cb();
         },
@@ -146,38 +152,6 @@ exports.testSimplAsyncMatchQueue = function (test) {
     });
   }, () => {
     test.deepEqual(thenObjs, N);
-    test.equals(cbCalls, N.length);
-    test.done();
-  });
-};
-
-exports.testSimplAsyncNoMatchQueue = function (test) {
-  var cbCalls = 0;
-
-  const ffm = ff.Matcher(
-    $(
-      (o, p, c, pc, cb) => setTimeout(
-        () => cb(),
-        1
-      )
-    ).then(
-      (objs, cb) => setTimeout(
-        () => {
-          test.ok(false);
-          cb();
-        },
-        1
-      )
-    )
-  );
-
-  async.each(N, (obj, cb) => ffm(obj,
-    (err) => {
-      test.ifError(err);
-      cbCalls++;
-      cb();
-    }),
-  () => {
     test.equals(cbCalls, N.length);
     test.done();
   });

@@ -4,8 +4,6 @@ const path = require('path');
 const NodeVM = require('vm2').NodeVM;
 const esprima = require('esprima');
 
-'use strict';
-
 const MATCHBOX_ENV = path.join(__dirname, 'matchboxenv.js');
 const MATCHBOX_ENV_BUILTINS = ['path'];
 

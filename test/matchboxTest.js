@@ -5,8 +5,8 @@ const Matchbox = require('..').Matchbox;
 
 const RULES = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules.js'), { encoding: 'utf-8' });
 const RULES_FAIL_SYNTAX = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failSyntax.js'), { encoding: 'utf-8' });
-const RULES_FAIL_RUNNTIME1 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRunntime1.js'), { encoding: 'utf-8' });
-const RULES_FAIL_RUNNTIME2 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRunntime2.js'), { encoding: 'utf-8' });
+const RULES_FAIL_RUNTIME1 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRuntime1.js'), { encoding: 'utf-8' });
+const RULES_FAIL_RUNTIME2 = fs.readFileSync(path.join(__dirname, 'meta', 'stringRules_failRuntime2.js'), { encoding: 'utf-8' });
 const RULES_EMIT = fs.readFileSync(path.join(__dirname, 'meta', 'emitRules.js'), { encoding: 'utf-8' });
 
 const objs = [
@@ -105,8 +105,8 @@ exports.testMatchboxEventsNoVM = function (test) {
   test.done();
 };
 
-exports.testMatchboxMatchSyncRunntimeExceptionInMatch = function (test) {
-  const matchbox = new Matchbox(RULES_FAIL_RUNNTIME1, {
+exports.testMatchboxMatchSyncRuntimeExceptionInMatch = function (test) {
+  const matchbox = new Matchbox(RULES_FAIL_RUNTIME1, {
     console: 'off'
   });
 
@@ -125,8 +125,8 @@ exports.testMatchboxMatchSyncRunntimeExceptionInMatch = function (test) {
   test.done();
 };
 
-exports.testMatchboxMatchSyncRunntimeExceptionInThen = function (test) {
-  const matchbox = new Matchbox(RULES_FAIL_RUNNTIME2, {
+exports.testMatchboxMatchSyncRuntimeExceptionInThen = function (test) {
+  const matchbox = new Matchbox(RULES_FAIL_RUNTIME2, {
     console: 'off'
   });
 
@@ -145,8 +145,8 @@ exports.testMatchboxMatchSyncRunntimeExceptionInThen = function (test) {
   test.done();
 };
 
-exports.testMatchboxMatchAsyncRunntimeExceptionInMatch = function (test) {
-  const matchbox = new Matchbox(RULES_FAIL_RUNNTIME1, {
+exports.testMatchboxMatchAsyncRuntimeExceptionInMatch = function (test) {
+  const matchbox = new Matchbox(RULES_FAIL_RUNTIME1, {
     console: 'off'
   });
 
@@ -165,8 +165,8 @@ exports.testMatchboxMatchAsyncRunntimeExceptionInMatch = function (test) {
   test.done();
 };
 
-exports.testMatchboxMatchAsyncRunntimeExceptionInThen = function (test) {
-  const matchbox = new Matchbox(RULES_FAIL_RUNNTIME2, {
+exports.testMatchboxMatchAsyncRuntimeExceptionInThen = function (test) {
+  const matchbox = new Matchbox(RULES_FAIL_RUNTIME2, {
     console: 'off'
   });
   objs.forEach(function (obj) {

@@ -62,6 +62,7 @@ module.exports = function () {
   // add a state per rule
   rules.forEach((rule) => states.push(new State(rule)));
 
+  var isMatching = false;
   const matchObjQueue = [];
 
   /**
@@ -78,9 +79,12 @@ module.exports = function () {
 
     // add to queue and abort if already matching
     matchObjQueue.push([obj, cb]);
-    if (matchObjQueue.length > 1) return;
+    if (isMatching) return;
+    isMatching = true;
 
-    (function matchObj (obj, cb) {
+    (function matchNextObj () {
+      const [obj, cb] = matchObjQueue.shift();
+
       // we've to clone states because we might 'forget' states during runtime
       async.each(_(states).clone(), function (state, cb) {
         var asyncCbCalled = false;
@@ -127,10 +131,18 @@ module.exports = function () {
           asyncCb(e);
         }
       }, (err) => {
-        if (err) return cb(err);
-        cb();
-        if (matchObjQueue.length > 0) match.apply(this, matchObjQueue.shift());
+        if (err) cb(err);
+        else cb();
+
+        // empty queue -> bail out
+        if (matchObjQueue.length <= 0) {
+          isMatching = false;
+          return;
+        }
+
+        // continue matching
+        matchNextObj();
       });
-    }).apply(this, matchObjQueue.shift());
+    }).apply(this);
   };
 };
