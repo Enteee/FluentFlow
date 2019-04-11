@@ -2,3 +2,4 @@ FluentFlow is a filter language which lets you easily define 'followed by'-relat
 
 [![Travis](https://img.shields.io/travis/Enteee/FluentFlow.svg)](https://travis-ci.org/Enteee/FluentFlow)
 [![Coverage Status](https://coveralls.io/repos/github/Enteee/FluentFlow/badge.svg)](https://coveralls.io/github/Enteee/FluentFlow)
+[![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)

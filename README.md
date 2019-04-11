@@ -6,7 +6,7 @@ FluentFlow is a filter language which lets you easily define 'followed by'-relat
 
 [![Travis][4]][3]
 [![Coverage Status][6]][5]
-[![Codacy Badge][8]][7]
+[![js-semistandard-style][8]][7]
 
 
 ## Library
@@ -348,9 +348,9 @@ Signal the result of a matching operation.
 
 [6]: https://coveralls.io/repos/github/Enteee/FluentFlow/badge.svg
 
-[7]: https://www.codacy.com/app/Enteee/FluentFlow?utm_source=github.com&utm_medium=referral&utm_content=Enteee/FluentFlow&utm_campaign=Badge_Grade
+[7]: https://github.com/Flet/semistandard
 
-[8]: https://api.codacy.com/project/badge/Grade/fdf8c02acc4c471ca5b7e3925592a0be
+[8]: https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square
 
 [9]: https://enteee.github.io/FluentFlow/
 
