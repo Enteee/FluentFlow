@@ -1,7 +1,7 @@
 {
   "name": "fluentflow",
   "main": "index.js",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "scripts": {
     "test": "nyc nodeunit && semistandard && npm run docs-lint && npm audit",
     "format": "semistandard",
