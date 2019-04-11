@@ -89,7 +89,7 @@ module.exports = function () {
       async.each(_(states).clone(), function (state, cb) {
         var nextCalled = false;
         /**
-         * Signal the end of a {@link thenCallback.
+         * Signal the end of a {@link thenCallback}.
          */
         function next () {
           if (nextCalled) throw new Error('next callback already called');

@@ -319,11 +319,11 @@ Returns **[Rule][19]** finish
 
 ## next
 
-Signal the end of a {@link thenCallback.
+Signal the end of a [thenCallback][31].
 
 ## forget
 
-Signal the intent to forget an object. Must be called before [next][31].
+Signal the intent to forget an object. Must be called before [next][32].
 
 ### Parameters
 
@@ -335,7 +335,7 @@ Signal the result of a matching operation.
 
 ### Parameters
 
--   `matched` **[Boolean][32]?** true if matched, false otherwise. Default if omitted: false.
+-   `matched` **[Boolean][33]?** true if matched, false otherwise. Default if omitted: false.
 
 [1]: #command-line
 
@@ -397,6 +397,8 @@ Signal the result of a matching operation.
 
 [30]: #rulebuilder
 
-[31]: #next
+[31]: #thencallback
 
-[32]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[32]: #next
+
+[33]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
