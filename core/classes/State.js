@@ -19,7 +19,7 @@ module.exports = class State {
 
     this.prev = [];
     if (!_.isUndefined(prevState) && !_.isUndefined(prevState.prev)) {
-      prevState.prev.forEach((p) => this.prev.unshift(p));
+      prevState.prev.forEach((p) => this.prev.push(p));
     }
     if (!_.isUndefined(obj)) {
       this.prev.unshift(obj);
