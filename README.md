@@ -2,6 +2,8 @@
 
 ## FluentFlow
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6436afcfeb9047ddb7c78b90df7d0fa5)](https://app.codacy.com/app/Enteee/FluentFlow?utm_source=github.com&utm_medium=referral&utm_content=Enteee/FluentFlow&utm_campaign=Badge_Grade_Dashboard)
+
 FluentFlow is a filter language which lets you easily define 'followed by'-relations in a flow of JavaScript objects. You can either use FluentFlow [from the command line][1] or as a [JavaScript library][2].
 
 [![Travis][4]][3]
