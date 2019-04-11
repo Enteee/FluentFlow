@@ -38,9 +38,10 @@
   "bin": {
     "fluentflow": "./bin/fluentflow.js"
   },
-  "directories": {
-    "test": "test"
-  },
+  "files": [
+    "bin/**/*.js",
+    "core/**/*.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Enteee/FluentFlow.git"
