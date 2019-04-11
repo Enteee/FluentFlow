@@ -120,7 +120,7 @@ Configure rules.js:
 Run FluentFlow:
 
 ```shell
-$ curl -s https://api.github.com/repos/t-moe/FluentFlow/events | fluentflow rules.js -j '*'
+$ curl -s https://api.github.com/repos/Enteee/FluentFlow/events | fluentflow rules.js -j '*'
 ```
 
 _Note:_ `-j '*'` splits an array into objects.
@@ -243,30 +243,16 @@ Type: [Function][22]
 -   `next` **[next][26]** end of callback. Continue matching next object
 -   `forget` **[forget][24]** forget objects.
 
-### Signal Types
+#### errorFirstCallback
 
+Standard node.js callback type.
 
-
-
-#### match
-
-Signal the result of a matching operation.
+Type: [Function][22]
 
 ##### Parameters
 
--   `matched` **[Boolean][27]?** true if matched, false otherwise. Default if omitted: false.
-
-#### next
-
-Signal the end of a {@link thenCallback.
-
-#### forget
-
-Signal the intent to forget an object. Must be called before [next][28].
-
-##### Parameters
-
--   `obj` **...[Object][13]** the object(s) to forget
+-   `Error` **[Object][13]** Truthy if an error occured
+-   `data` **...[Object][13]** data
 
 ### Helper Classes
 
@@ -284,7 +270,7 @@ Signal the intent to forget an object. Must be called before [next][28].
 
 ###### Parameters
 
--   `then` **[thenCallback][29]** match callback
+-   `then` **[thenCallback][27]** match callback
 
 #### RuleBuilder
 
@@ -292,7 +278,7 @@ Builds [Rule][17].
 
 ##### Parameters
 
--   `checker` **[checkerCallback][30]** first checker
+-   `checker` **[checkerCallback][28]** first checker
 
 ##### Examples
 
@@ -308,7 +294,7 @@ const rule = require('fluentflow').RuleBuilder(
 ); // prints [42, 9000]
 ```
 
-Returns **[RuleBuilder][31]** continue
+Returns **[RuleBuilder][29]** continue
 
 ##### followedBy
 
@@ -316,9 +302,9 @@ Add a new checker.
 
 ###### Parameters
 
--   `checker` **[checkerCallback][30]** next checker
+-   `checker` **[checkerCallback][28]** next checker
 
-Returns **[RuleBuilder][31]** continue
+Returns **[RuleBuilder][29]** continue
 
 ##### then
 
@@ -326,37 +312,41 @@ Finishes and builds the chain.
 
 ###### Parameters
 
--   `then` **[thenCallback][29]?** run if rule matches
+-   `then` **[thenCallback][27]?** run if rule matches
 
 Returns **[Rule][18]** finish
 
-### Generic Types
+## next
 
+Signal the end of a {@link thenCallback.
 
+## forget
 
+Signal the intent to forget an object. Must be called before [next][30].
 
-#### errorFirstCallback
+### Parameters
 
-Standard node.js callback type.
+-   `obj` **...[Object][13]** the object(s) to forget
 
-Type: [Function][22]
+## match
 
-##### Parameters
+Signal the result of a matching operation.
 
--   `Error` **[Object][13]** Truthy if an error occured
--   `data` **...[Object][13]** data
+### Parameters
+
+-   `matched` **[Boolean][31]?** true if matched, false otherwise. Default if omitted: false.
 
 [1]: #command-line
 
 [2]: #library
 
-[3]: https://travis-ci.org/t-moe/FluentFlow
+[3]: https://travis-ci.org/Enteee/FluentFlow
 
-[4]: https://img.shields.io/travis/t-moe/FluentFlow.svg
+[4]: https://img.shields.io/travis/Enteee/FluentFlow.svg
 
-[5]: https://coveralls.io/github/t-moe/FluentFlow
+[5]: https://coveralls.io/github/Enteee/FluentFlow
 
-[6]: https://coveralls.io/repos/github/t-moe/FluentFlow/badge.svg
+[6]: https://coveralls.io/repos/github/Enteee/FluentFlow/badge.svg
 
 [7]: https://www.codacy.com/app/timolang/FluentFlow
 
@@ -398,12 +388,12 @@ Type: [Function][22]
 
 [26]: #next
 
-[27]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[27]: #thencallback
 
-[28]: #next
+[28]: #checkercallback
 
-[29]: #thencallback
+[29]: #rulebuilder
 
-[30]: #checkercallback
+[30]: #next
 
-[31]: #rulebuilder
+[31]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean

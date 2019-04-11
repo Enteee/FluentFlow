@@ -14,7 +14,7 @@ toc:
     - ffm
     - Matcher
     - Matchbox
-    - name: Callbacks Types
+    - name: Callback Types
       children:
         - checkerCallback
         - thenCallback

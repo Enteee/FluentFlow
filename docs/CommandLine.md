@@ -48,7 +48,7 @@ Configure rules.js:
 Run FluentFlow:
 
 ```shell
-$ curl -s https://api.github.com/repos/t-moe/FluentFlow/events | fluentflow rules.js -j '*'
+$ curl -s https://api.github.com/repos/Enteee/FluentFlow/events | fluentflow rules.js -j '*'
 ```
 
 _Note:_ `-j '*'` splits an array into objects.
