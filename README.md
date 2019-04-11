@@ -348,9 +348,9 @@ Signal the result of a matching operation.
 
 [6]: https://coveralls.io/repos/github/Enteee/FluentFlow/badge.svg
 
-[7]: https://www.codacy.com/app/timolang/FluentFlow
+[7]: https://www.codacy.com/app/Enteee/FluentFlow?utm_source=github.com&utm_medium=referral&utm_content=Enteee/FluentFlow&utm_campaign=Badge_Grade
 
-[8]: https://api.codacy.com/project/badge/grade/72b447b11ed140198b1d549680880e13
+[8]: https://api.codacy.com/project/badge/Grade/fdf8c02acc4c471ca5b7e3925592a0be
 
 [9]: https://enteee.github.io/FluentFlow/
 
