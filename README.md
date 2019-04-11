@@ -7,6 +7,7 @@ FluentFlow is a filter language which lets you easily define 'followed by'-relat
 [![Travis][4]][3]
 [![Coverage Status][6]][5]
 [![js-semistandard-style][8]][7]
+[#FluentFlow][9]
 
 
 ## Library
@@ -135,26 +136,26 @@ $ npm test
 
 ## API
 
-[Documentation on github-pages][9]
+[Documentation on github-pages][10]
 
 
 ### ffm
 
-Matching core. Built using the JavaScript API using a [Matcher][10]
-or from a [String][11] in a [Matchbox][12].
+Matching core. Built using the JavaScript API using a [Matcher][11]
+or from a [String][12] in a [Matchbox][13].
 
 #### Parameters
 
--   `obj` **[Object][13]** next [Object][14] to match
--   `cb` **[errorFirstCallback][15]?** callback after matching finishes
+-   `obj` **[Object][14]** next [Object][15] to match
+-   `cb` **[errorFirstCallback][16]?** callback after matching finishes
 
 ### Matcher
 
-Generates the matcher ([ffm][16]) for the given [Rule][17](s).
+Generates the matcher ([ffm][17]) for the given [Rule][18](s).
 
 #### Parameters
 
--   `rule` **...[Rule][18]** Rule(s) to match against.
+-   `rule` **...[Rule][19]** Rule(s) to match against.
 
 #### Examples
 
@@ -177,16 +178,16 @@ const ffm = ff.Matcher(
 _.range(9001).forEach((obj) => ffm(obj)); // prints [42, 9000]
 ```
 
-Returns **[ffm][19]** a new matcher
+Returns **[ffm][20]** a new matcher
 
 ### Matchbox
 
-Generates the isolated matcher ([ffm][16]) for the given [Rule][17](s).
+Generates the isolated matcher ([ffm][17]) for the given [Rule][18](s).
 
 #### Parameters
 
--   `rulesRaw` **[string][20]** a string of rules
--   `vmoptions` **[Object][13]?** options to [vm2][21]
+-   `rulesRaw` **[string][21]** a string of rules
+-   `vmoptions` **[Object][14]?** options to [vm2][22]
 
 #### Examples
 
@@ -209,7 +210,7 @@ const ffm = require('fluentflow').Matchbox(`
 _.range(9001).forEach((obj) => ffm(obj)); // prints [42, 9000]
 ```
 
-Returns **[ffm][19]** an isolated [ffm][16]
+Returns **[ffm][20]** an isolated [ffm][17]
 
 ### Callback Types
 
@@ -218,41 +219,41 @@ Returns **[ffm][19]** an isolated [ffm][16]
 
 #### checkerCallback
 
-Checks if an [Object][14] matches.
+Checks if an [Object][15] matches.
 
-Type: [Function][22]
+Type: [Function][23]
 
 ##### Parameters
 
--   `o` **[Object][13]** the object to check
--   `p` **[Object][13]** the previous object
--   `c` **[Object][13]** the matching context
--   `pc` **[Object][13]** the matching context from the previous state
--   `match` **[match][23]** match callback, true if matches false otherwise
--   `forget` **[forget][24]** forget callback, forget all states including objects passed as arguments
+-   `o` **[Object][14]** the object to check
+-   `p` **[Object][14]** the previous object
+-   `c` **[Object][14]** the matching context
+-   `pc` **[Object][14]** the matching context from the previous state
+-   `match` **[match][24]** match callback, true if matches false otherwise
+-   `forget` **[forget][25]** forget callback, forget all states including objects passed as arguments
 
 #### thenCallback
 
-Called each time a sequence of [Object][14]s matches a [Rule][17] in a [ffm][16]
+Called each time a sequence of [Object][15]s matches a [Rule][18] in a [ffm][17]
 
-Type: [Function][22]
+Type: [Function][23]
 
 ##### Parameters
 
--   `objs` **[Array][25]** the matched objects
--   `next` **[next][26]** end of callback. Continue matching next object
--   `forget` **[forget][24]** forget objects.
+-   `objs` **[Array][26]** the matched objects
+-   `next` **[next][27]** end of callback. Continue matching next object
+-   `forget` **[forget][25]** forget objects.
 
 #### errorFirstCallback
 
 Standard node.js callback type.
 
-Type: [Function][22]
+Type: [Function][23]
 
 ##### Parameters
 
--   `Error` **[Object][13]** Truthy if an error occured
--   `data` **...[Object][13]** data
+-   `Error` **[Object][14]** Truthy if an error occured
+-   `data` **...[Object][14]** data
 
 ### Helper Classes
 
@@ -263,22 +264,22 @@ Type: [Function][22]
 
 ##### Parameters
 
--   `check` **[Function][22]** checker function
--   `next` **[Rule][18]** next rule
+-   `check` **[Function][23]** checker function
+-   `next` **[Rule][19]** next rule
 
 ##### setThen
 
 ###### Parameters
 
--   `then` **[thenCallback][27]** match callback
+-   `then` **[thenCallback][28]** match callback
 
 #### RuleBuilder
 
-Builds [Rule][17].
+Builds [Rule][18].
 
 ##### Parameters
 
--   `checker` **[checkerCallback][28]** first checker
+-   `checker` **[checkerCallback][29]** first checker
 
 ##### Examples
 
@@ -294,7 +295,7 @@ const rule = require('fluentflow').RuleBuilder(
 ); // prints [42, 9000]
 ```
 
-Returns **[RuleBuilder][29]** continue
+Returns **[RuleBuilder][30]** continue
 
 ##### followedBy
 
@@ -302,9 +303,9 @@ Add a new checker.
 
 ###### Parameters
 
--   `checker` **[checkerCallback][28]** next checker
+-   `checker` **[checkerCallback][29]** next checker
 
-Returns **[RuleBuilder][29]** continue
+Returns **[RuleBuilder][30]** continue
 
 ##### then
 
@@ -312,9 +313,9 @@ Finishes and builds the chain.
 
 ###### Parameters
 
--   `then` **[thenCallback][27]?** run if rule matches
+-   `then` **[thenCallback][28]?** run if rule matches
 
-Returns **[Rule][18]** finish
+Returns **[Rule][19]** finish
 
 ## next
 
@@ -322,11 +323,11 @@ Signal the end of a {@link thenCallback.
 
 ## forget
 
-Signal the intent to forget an object. Must be called before [next][30].
+Signal the intent to forget an object. Must be called before [next][31].
 
 ### Parameters
 
--   `obj` **...[Object][13]** the object(s) to forget
+-   `obj` **...[Object][14]** the object(s) to forget
 
 ## match
 
@@ -334,7 +335,7 @@ Signal the result of a matching operation.
 
 ### Parameters
 
--   `matched` **[Boolean][31]?** true if matched, false otherwise. Default if omitted: false.
+-   `matched` **[Boolean][32]?** true if matched, false otherwise. Default if omitted: false.
 
 [1]: #command-line
 
@@ -352,48 +353,50 @@ Signal the result of a matching operation.
 
 [8]: https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square
 
-[9]: https://enteee.github.io/FluentFlow/
+[9]: https://twitter.com/hashtag/FluentFlow
 
-[10]: #matcher
+[10]: https://enteee.github.io/FluentFlow/
 
-[11]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[11]: #matcher
 
-[12]: #matchbox
+[12]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[13]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[13]: #matchbox
 
 [14]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[15]: #errorfirstcallback
+[15]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[16]: #ffm
+[16]: #errorfirstcallback
 
-[17]: #rule
+[17]: #ffm
 
 [18]: #rule
 
-[19]: #ffm
+[19]: #rule
 
-[20]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[20]: #ffm
 
-[21]: https://www.npmjs.com/package/vm2
+[21]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[22]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[22]: https://www.npmjs.com/package/vm2
 
-[23]: #match
+[23]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
 
-[24]: #forget
+[24]: #match
 
-[25]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[25]: #forget
 
-[26]: #next
+[26]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[27]: #thencallback
+[27]: #next
 
-[28]: #checkercallback
+[28]: #thencallback
 
-[29]: #rulebuilder
+[29]: #checkercallback
 
-[30]: #next
+[30]: #rulebuilder
 
-[31]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[31]: #next
+
+[32]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
