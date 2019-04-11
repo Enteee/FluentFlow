@@ -1,7 +1,17 @@
 language: node_js
 node_js:
-  - "6"
-  - "6.0"
-  - "6.1"
-after_script:
-  - npm run coveralls
+- stable
+- '8'
+- '6'
+- '6.0'
+- '6.1'
+after_success:
+- npm run coveralls
+deploy:
+  provider: npm
+  email: ducksource@duckpond.ch
+  api_key:
+    secure: O9U9HFjC4/5v0kaeSBYC2K/CfftXon7NQkLfyWVyV2PNHCEjALknqAwTGjRNXQM7Tj6BpxFO+WDGzrz9S2m5OhrWj5cBK+thj8pQGREWTqyZLH9fUt/e8xCMlWvYyH1w58biOYmoIjHLatD3inuEEBx7F+3jgRP9SM0kPTUKIT2lma3ZpGqX9PNd4FQv4f4U+Y0n7NHG61ZZrf4wcGW6hd5qS0Hd+2kpD/sFz7MaKORj/ocX0tg/ap/8eT8/GvrGFDeUg3sT1vzRvgSpLzGmfbK0dxdjlWm5HFFAtkAApnWKfqXvCeNkFdez7XX9Nw9WXSLt8Xg+VeKyWVJpzQFCbGmWEZg82Xp0OYuOZ/noKANIr7Yaf8p1hDhArZby+kwr073y1QH9jet/7pg1hHX+NgH8Im2MgfZbVafkVBBYqgEhKHJ8UozwJIORnsF/XiNopictM5f7jCaMNwg5aTaIU6ml/UZMQ+2VgCF+L8QUgwhofxIPK4K84wg/EQ4PxO+4DOC/RjxhGMP2BXryOuaGRnpOdiyfnWu7YDQ2DQKe+vZ4ljrdA0JyjDaCnxELfufRWn32eLwKWliuqIdrCz5HDZJbGqcKcaLu3FflKnl/xrhfls+ppM33Hj+JFNxWeuaLZkzU0nyzpI+uPQSpTxriftWyF16RthwsuF/bXmHIvmE=
+  on:
+    tags: true
+    repo: Enteee/FluentFlow
