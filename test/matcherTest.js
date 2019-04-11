@@ -328,3 +328,52 @@ exports.testRuleThenRuntimException = function (test) {
     }
   );
 };
+
+exports.testPreviousInOrder = function (test) {
+  const { List } = require('immutable');
+
+  var thenCalls = 0;
+  var cbCalls = 0;
+
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => {
+        match(true);
+      }
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        match(o-1 === p.get(0));
+      }
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        const expected = List([p.get(0), p.get(0)-1]);
+        test.ok(
+          p.equals(expected),
+          p + ' !== ' + expected
+        );
+        match(o-1 === p.get(0));
+      }
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        const expected = List([p.get(0), p.get(0)-1, p.get(0)-2]);
+        test.ok(
+          p.equals(expected),
+          p + ' !== ' + expected
+        );
+        match(o-1 === p.get(0));
+      }
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        const expected = List([p.get(0), p.get(0)-1, p.get(0)-2, p.get(0)-3]);
+        test.ok(
+          p.equals(expected),
+          p + ' !== ' + expected
+        );
+        match(o-1 === p.get(0));
+      }
+    ).then()
+  );
+
+  N.forEach((obj) => ffm(obj));
+  test.done();
+};
