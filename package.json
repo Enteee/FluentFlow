@@ -3,7 +3,7 @@
   "main": "index.js",
   "version": "0.5.0",
   "scripts": {
-    "test": "nyc nodeunit && semistandard && npm run docs-lint && npm audit",
+    "test": "nyc nodeunit && nyc check-coverage --lines 98 --functions 92 --branches 71 --statements 90 && semistandard && npm run docs-lint && npm audit",
     "format": "semistandard",
     "format-fix": "semistandard --fix",
     "coverage": "nyc nodeunit",
