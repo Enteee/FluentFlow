@@ -7,7 +7,7 @@
     "format": "semistandard",
     "format-fix": "semistandard --fix",
     "coverage": "nyc nodeunit",
-    "coveralls": "nyc report --reporter=lcov | coveralls",
+    "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "docs-lint": "documentation lint core/**",
     "docs-build": "npm run docs-build-md && npm run docs-build-html",
     "docs-build-md": "documentation build --config documentation-md.yml --markdown-toc false -f md -o README.md core/**",
