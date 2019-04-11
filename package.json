@@ -32,8 +32,8 @@
     "nyc": "^13.1.0",
     "semistandard": "^13.0.1"
   },
-  "license": "GPL-3.0",
-  "description": "FluentFlow is matching engine which lets you easily define 'followed by'-relations in a flow of objects. Rules can be written in javascript as plain functions or using a fluent API.",
+  "license": "Apache-2.0",
+  "description": "FluentFlow is a filter language which lets you easily define 'followed by'-relations in a flow of JavaScript objects",
   "bin": {
     "fluentflow": "./bin/fluentflow.js"
   },
@@ -42,21 +42,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/t-moe/FluentFlow.git"
+    "url": "git+https://github.com/Enteee/FluentFlow.git"
   },
   "keywords": [
     "json",
     "matcher",
     "fluent"
   ],
-  "author": "T-moe <timolang@gmail.com>",
+  "author": "Ente <ducksource@duckpond.ch>",
   "contributors": [
-    "Ente <ducksource@duckpond.ch>"
+    "T-moe <timolang@gmail.com>"
   ],
   "bugs": {
-    "url": "https://github.com/t-moe/FluentFlow/issues"
+    "url": "https://github.com/Enteee/FluentFlow/issues"
   },
-  "homepage": "https://github.com/t-moe/FluentFlow#readme",
+  "homepage": "https://github.com/Enteee/FluentFlow#readme",
   "semistandard": {
     "ignore": [
       "rules.js",
