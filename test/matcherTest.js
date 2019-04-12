@@ -247,6 +247,35 @@ exports.testForget = function (test) {
   test.done();
 };
 
+exports.testForgetInThen = function (test) {
+  var followedByCalls = 0;
+  var thenCalls = 0;
+
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(o === 42)
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        followedByCalls++;
+        match(true);
+      }
+    ).then(
+      (objs, next, forget) => {
+        thenCalls++;
+        test.equals(objs.get(0), 43);
+        forget(p.get(0));
+        next();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm(obj));
+
+  test.equals(followedByCalls, 1);
+  test.equals(thenCalls, 1);
+  test.done();
+};
+
 exports.testForgetAfterNextException = function (test) {
   const ffm = ff.Matcher(
     $(
