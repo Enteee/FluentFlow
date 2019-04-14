@@ -1,4 +1,4 @@
-FluentFlow is a filter language which lets you easily define 'followed by'-relations in a flow of JavaScript objects. You can either use FluentFlow [from the command line](#command-line) or as a [JavaScript library](#library).
+FluentFlow is a filter language with a simple [API](#api) which lets you define 'followed by'-relations in a flow of JavaScript objects. You can either use FluentFlow [from the command line](#command-line) or as a [JavaScript library](#library).
 
 [![npm version](https://badge.fury.io/js/fluentflow.svg)](https://badge.fury.io/js/fluentflow)
 [![Travis](https://img.shields.io/travis/Enteee/FluentFlow/master.svg)](https://travis-ci.org/Enteee/FluentFlow)
