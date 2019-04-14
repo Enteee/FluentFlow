@@ -228,7 +228,7 @@ exports.testForget = function (test) {
     ).followedBy(
       (o, p, c, pc, match, forget) => {
         followedByCalls++;
-        forget(p.get(0));
+        forget(42);
         match(true);
       }
     ).then(
@@ -263,7 +263,8 @@ exports.testForgetInThen = function (test) {
       (objs, next, forget) => {
         thenCalls++;
         test.equals(objs.get(0), 43);
-        forget(p.get(0));
+        test.equals(objs.get(1), 42);
+        forget(objs.get(1));
         next();
       }
     )
@@ -328,6 +329,17 @@ exports.testMultiChain = function (test) {
   test.done();
 };
 
+exports.testRuleMatchRuntimNoAsyncThrow = function (test) {
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(0())
+    ).then()
+  );
+
+  test.throws(() => ffm(0));
+  test.done();
+};
+
 exports.testRuleMatchRuntimException = function (test) {
   const ffm = ff.Matcher(
     $(
@@ -335,7 +347,25 @@ exports.testRuleMatchRuntimException = function (test) {
     ).then()
   );
 
-  async.eachSeries(N, (obj, cb) => ffm(obj, cb),
+  ffm(
+    0,
+    (err) => {
+      test.ok(!!err);
+      test.done();
+    }
+  );
+};
+
+exports.testRuleMatchRuntimException = function (test) {
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(0())
+    ).then()
+  );
+
+  async.eachSeries(
+    N,
+    (obj, cb) => ffm(obj, cb),
     (err) => {
       test.ok(!!err);
       test.done();
