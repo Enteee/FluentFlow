@@ -228,7 +228,7 @@ exports.testForget = function (test) {
     ).followedBy(
       (o, p, c, pc, match, forget) => {
         followedByCalls++;
-        forget(42);
+        forget(p.get(0));
         match(true);
       }
     ).then(
@@ -241,6 +241,34 @@ exports.testForget = function (test) {
   );
 
   N.forEach((obj) => ffm(obj));
+
+  test.equals(followedByCalls, 1);
+  test.equals(thenCalls, 1);
+  test.done();
+};
+
+exports.testForgetObject = function (test) {
+  var followedByCalls = 0;
+  var thenCalls = 0;
+
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(o.get('i') === 42)
+    ).followedBy(
+      (o, p, c, pc, match, forget) => {
+        followedByCalls++;
+        forget(p.get(0));
+        match(true);
+      }
+    ).then(
+      (objs, next) => {
+        thenCalls++;
+        next();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm({ i: obj }));
 
   test.equals(followedByCalls, 1);
   test.equals(thenCalls, 1);
@@ -262,8 +290,6 @@ exports.testForgetInThen = function (test) {
     ).then(
       (objs, next, forget) => {
         thenCalls++;
-        test.equals(objs.get(0), 43);
-        test.equals(objs.get(1), 42);
         forget(objs.get(1));
         next();
       }
@@ -271,6 +297,34 @@ exports.testForgetInThen = function (test) {
   );
 
   N.forEach((obj) => ffm(obj));
+
+  test.equals(followedByCalls, 1);
+  test.equals(thenCalls, 1);
+  test.done();
+};
+
+exports.testForgetObjectInThen = function (test) {
+  var followedByCalls = 0;
+  var thenCalls = 0;
+
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(o.get('i') === 42)
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        followedByCalls++;
+        match(true);
+      }
+    ).then(
+      (objs, next, forget) => {
+        thenCalls++;
+        forget(objs.get(1));
+        next();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm({ i: obj }));
 
   test.equals(followedByCalls, 1);
   test.equals(thenCalls, 1);

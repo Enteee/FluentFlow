@@ -10,7 +10,7 @@ const immutableJS = require('immutable');
  * @private
  */
 function fromJSGreedy (js) {
-  return typeof js !== 'object' || js === null
+  return typeof js !== 'object' || js === null || js instanceof immutableJS.Collection
     ? js : Array.isArray(js)
       ? immutableJS.Seq(js).map(fromJSGreedy).toList()
       : immutableJS.Seq(js).map(fromJSGreedy).toMap();
@@ -22,7 +22,7 @@ function fromJSGreedy (js) {
  */
 /* eslint-disable no-unused-vars */
 function fromJSOrdered (js) {
-  return typeof js !== 'object' || js === null
+  return typeof js !== 'object' || js === null || js instanceof immutableJS.Collection
     ? js : Array.isArray(js)
       ? immutableJS.Seq(js).map(fromJSOrdered).toList()
       : immutableJS.Seq(js).map(fromJSOrdered).toOrderedMap();
