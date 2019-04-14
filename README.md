@@ -348,7 +348,7 @@ Signal the result of a matching operation.
 
 [5]: https://travis-ci.org/Enteee/FluentFlow
 
-[6]: https://img.shields.io/travis/Enteee/FluentFlow.svg
+[6]: https://img.shields.io/travis/Enteee/FluentFlow/master.svg
 
 [7]: https://coveralls.io/github/Enteee/FluentFlow
 
