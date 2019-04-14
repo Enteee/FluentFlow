@@ -247,6 +247,90 @@ exports.testForget = function (test) {
   test.done();
 };
 
+exports.testForgetObject = function (test) {
+  var followedByCalls = 0;
+  var thenCalls = 0;
+
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(o.get('i') === 42)
+    ).followedBy(
+      (o, p, c, pc, match, forget) => {
+        followedByCalls++;
+        forget(p.get(0));
+        match(true);
+      }
+    ).then(
+      (objs, next) => {
+        thenCalls++;
+        next();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm({ i: obj }));
+
+  test.equals(followedByCalls, 1);
+  test.equals(thenCalls, 1);
+  test.done();
+};
+
+exports.testForgetInThen = function (test) {
+  var followedByCalls = 0;
+  var thenCalls = 0;
+
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(o === 42)
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        followedByCalls++;
+        match(true);
+      }
+    ).then(
+      (objs, next, forget) => {
+        thenCalls++;
+        forget(objs.get(1));
+        next();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm(obj));
+
+  test.equals(followedByCalls, 1);
+  test.equals(thenCalls, 1);
+  test.done();
+};
+
+exports.testForgetObjectInThen = function (test) {
+  var followedByCalls = 0;
+  var thenCalls = 0;
+
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(o.get('i') === 42)
+    ).followedBy(
+      (o, p, c, pc, match) => {
+        followedByCalls++;
+        match(true);
+      }
+    ).then(
+      (objs, next, forget) => {
+        thenCalls++;
+        forget(objs.get(1));
+        next();
+      }
+    )
+  );
+
+  N.forEach((obj) => ffm({ i: obj }));
+
+  test.equals(followedByCalls, 1);
+  test.equals(thenCalls, 1);
+  test.done();
+};
+
 exports.testForgetAfterNextException = function (test) {
   const ffm = ff.Matcher(
     $(
@@ -299,6 +383,17 @@ exports.testMultiChain = function (test) {
   test.done();
 };
 
+exports.testRuleMatchRuntimNoAsyncThrow = function (test) {
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(0())
+    ).then()
+  );
+
+  test.throws(() => ffm(0));
+  test.done();
+};
+
 exports.testRuleMatchRuntimException = function (test) {
   const ffm = ff.Matcher(
     $(
@@ -306,7 +401,25 @@ exports.testRuleMatchRuntimException = function (test) {
     ).then()
   );
 
-  async.eachSeries(N, (obj, cb) => ffm(obj, cb),
+  ffm(
+    0,
+    (err) => {
+      test.ok(!!err);
+      test.done();
+    }
+  );
+};
+
+exports.testRuleMatchRuntimException = function (test) {
+  const ffm = ff.Matcher(
+    $(
+      (o, p, c, pc, match) => match(0())
+    ).then()
+  );
+
+  async.eachSeries(
+    N,
+    (obj, cb) => ffm(obj, cb),
     (err) => {
       test.ok(!!err);
       test.done();

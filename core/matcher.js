@@ -74,7 +74,7 @@ module.exports = function () {
    */
   return function ffm (obj, cb) {
     obj = make.immutable((!_.isUndefined(obj)) ? obj : {});
-    cb = cb || function () {};
+    cb = cb || function (err) { if (err) throw err; };
     if (!_.isFunction(cb)) throw new Error('cb must be Function');
 
     // add to queue and abort if matching in progress
@@ -125,15 +125,11 @@ module.exports = function () {
           );
           // push to next rule
           if (state.rule.next) states.push(newState);
-          try {
-            state.rule.then(
-              newState.prev,
-              // callbacks
-              next, forget
-            );
-          } catch (e) {
-            cb(e);
-          }
+          state.rule.then(
+            newState.prev,
+            // callbacks
+            next, forget
+          );
         }
 
         try {
