@@ -16,18 +16,18 @@
   },
   "dependencies": {
     "JSONStream": "^1.2.1",
-    "async": "^2.1.2",
+    "async": "^2.6.3",
     "esprima": "^4.0.1",
     "event-stream": "^4.0.1",
     "harmony-reflect": "^1.6.1",
     "immutable": "^4.0.0-rc.12",
-    "lodash": "^4.16.4",
+    "lodash": "^4.17.15",
     "minimist": "^1.2.0",
     "uglify-js2": "^2.1.11",
-    "vm2": "^3.6.10"
+    "vm2": "^3.8.3"
   },
   "devDependencies": {
-    "coveralls": "^3.0.2",
+    "coveralls": "^3.0.5",
     "documentation": "^8.1.2",
     "nodeunit": "^0.11.3",
     "nyc": "^13.1.0",
