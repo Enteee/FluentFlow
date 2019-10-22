@@ -5,7 +5,7 @@
 FluentFlow is a filter language with a simple [API][1] which lets you define 'followed by'-relations in a flow of JavaScript objects. You can either use FluentFlow [from the command line][2] or as a [JavaScript library][3].
 
 [![npm version][5]][4]
-[![Travis][7]][6]
+[![Build Status][7]][6]
 [![Coverage Status][9]][8]
 [![js-semistandard-style][11]][10]
 [#FluentFlow][12]
@@ -348,9 +348,9 @@ Signal the result of a matching operation.
 
 [5]: https://badge.fury.io/js/fluentflow.svg
 
-[6]: https://travis-ci.org/Enteee/FluentFlow
+[6]: https://travis-ci.com/Enteee/FluentFlow
 
-[7]: https://img.shields.io/travis/Enteee/FluentFlow/master.svg
+[7]: https://travis-ci.com/Enteee/FluentFlow.svg?branch=master
 
 [8]: https://coveralls.io/github/Enteee/FluentFlow
 
