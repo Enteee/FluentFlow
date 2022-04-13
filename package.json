@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "JSONStream": "^1.2.1",
-    "async": "^2.6.3",
+    "async": "^3.2.2",
     "esprima": "^4.0.1",
     "event-stream": "^4.0.1",
     "harmony-reflect": "^1.6.1",
